@@ -1,0 +1,162 @@
+[
+  {
+    "id": "oswald_charles",
+    "name": "奥斯瓦尔德·查尔斯",
+    "isMain": true,
+    "baseProfile": {
+      "age": 20,
+      "gender": "男性",
+      "appearance": "年轻帅气，身材高大，眼神阴沉，气质威严，穿着公爵正装或军装，行动果断",
+      "personality": "情绪稳定，果断决策，重视民生，有野心，善于治理，对下属赏罚分明",
+      "background": "北方公爵，穿越者，前世为完成角色扮演任务而死亡，后因祈愿之星的力量回到过去。他致力于发展北方领，改善民生，对抗魔族，同时与各方势力周旋。"
+    },
+    "stats": {
+      "health": 100,
+      "energy": 100,
+      "arousal": 0,
+      "affection": 50
+    },
+    "status": "正常",
+    "worldId": "after_death_rebellion"
+  },
+  {
+    "id": "elaine",
+    "name": "艾丽妮",
+    "isMain": true,
+    "baseProfile": {
+      "age": 18,
+      "gender": "女性",
+      "appearance": "红发少女，容貌秀丽，身姿优美，常穿女仆装，偶尔穿着正式服装",
+      "personality": "聪明能干，忠诚，有野心，办事效率高，对奥斯瓦尔德忠心耿耿",
+      "background": "帝国名牌大学毕业，男爵家大小姐，应聘公爵府秘书，后被奥斯瓦尔德要求做贴身女仆。她在奥斯瓦尔德死后掀起大规模内乱，展现出强大的号召力和组织能力。"
+    },
+    "stats": {
+      "health": 100,
+      "energy": 100,
+      "arousal": 0,
+      "affection": 50
+    },
+    "status": "正常",
+    "worldId": "after_death_rebellion"
+  },
+  {
+    "id": "annie",
+    "name": "亚妮",
+    "isMain": true,
+    "baseProfile": {
+      "age": 17,
+      "gender": "女性",
+      "appearance": "银发少女，容貌美丽，气质优雅，穿着侯爵千金的服饰",
+      "personality": "聪明，有远见，内心矛盾，对奥斯瓦尔德既有偏见又有理解",
+      "background": "奥斯瓦尔德的未婚妻，侯爵之女，拥有祈愿之星。她保留了前世的记忆，知道奥斯瓦尔德死后北方领的混乱，试图寻找改变命运的方法。"
+    },
+    "stats": {
+      "health": 100,
+      "energy": 100,
+      "arousal": 0,
+      "affection": 50
+    },
+    "status": "正常",
+    "worldId": "after_death_rebellion"
+  },
+  {
+    "id": "red",
+    "name": "雷德",
+    "isMain": false,
+    "baseProfile": {
+      "age": 30,
+      "gender": "男性",
+      "appearance": "身材高大，军人气质，穿着骑士团长服装，表情严肃",
+      "personality": "忠诚，有些贪财，作战能力一般，但应急工作处理得当",
+      "background": "从基层打拼上来的老兵，骑士团长，奥斯瓦尔德的忠诚下属。虽然作战贪生怕死，但对公爵忠心耿耿，负责守卫冰城。"
+    },
+    "stats": {
+      "health": 100,
+      "energy": 100,
+      "arousal": 0,
+      "affection": 50
+    },
+    "status": "正常",
+    "worldId": "after_death_rebellion"
+  },
+  {
+    "id": "thorne",
+    "name": "索恩",
+    "isMain": false,
+    "baseProfile": {
+      "age": 20,
+      "gender": "男性",
+      "appearance": "年轻勇者，身材健壮，穿着勇者装备，气质正直",
+      "personality": "温柔，正直勇敢，理想主义，有些天真",
+      "background": "勇者，主角小队领袖，被国王派往北方领处理事务。前世与亚妮产生感情，继承了奥斯瓦尔德的遗产，与魔族军展开大战。"
+    },
+    "stats": {
+      "health": 100,
+      "energy": 100,
+      "arousal": 0,
+      "affection": 50
+    },
+    "status": "正常",
+    "worldId": "after_death_rebellion"
+  },
+  {
+    "id": "diana",
+    "name": "戴安娜",
+    "isMain": false,
+    "baseProfile": {
+      "age": 18,
+      "gender": "女性",
+      "appearance": "公主，金色长发，穿着精美华丽的衣裙，气质高贵",
+      "personality": "高傲，任性，有些偏执，对索恩有强烈的感情",
+      "background": "王国公主，对索恩一往情深，曾动用财力人力从奥斯瓦尔德处带走亚妮。悄悄来到冰城，试图了解艾丽妮叛乱的原因。"
+    },
+    "stats": {
+      "health": 100,
+      "energy": 100,
+      "arousal": 0,
+      "affection": 50
+    },
+    "status": "正常",
+    "worldId": "after_death_rebellion"
+  },
+  {
+    "id": "baird",
+    "name": "贝尔德",
+    "isMain": false,
+    "baseProfile": {
+      "age": 60,
+      "gender": "男性",
+      "appearance": "头发斑白，皮肤松垮，穿着老盔甲，身姿佝偻但眼神锐利",
+      "personality": "经验丰富，洞察力强，勇敢无畏，对年轻一代充满期望",
+      "background": "屠龙者，曾经与妻子一起讨伐龙族，妻子牺牲。现在负责讨伐骨龙，指导年轻的勇者小队，展现出强大的实力和经验。"
+    },
+    "stats": {
+      "health": 100,
+      "energy": 100,
+      "arousal": 0,
+      "affection": 50
+    },
+    "status": "正常",
+    "worldId": "after_death_rebellion"
+  },
+  {
+    "id": "jacob",
+    "name": "雅各布",
+    "isMain": false,
+    "baseProfile": {
+      "age": 35,
+      "gender": "男性",
+      "appearance": "书生模样，穿着得体，表情温和但眼神锐利",
+      "personality": "聪明，善于谋略，能言善辩，做事果断",
+      "background": "公爵府特使，被奥斯瓦尔德派往侯爵府处理事务。成功说服侯爵领地上的私兵为公爵效力，展现出出色的外交和谋略能力。"
+    },
+    "stats": {
+      "health": 100,
+      "energy": 100,
+      "arousal": 0,
+      "affection": 50
+    },
+    "status": "正常",
+    "worldId": "after_death_rebellion"
+  }
+]

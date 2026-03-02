@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>故事进行中 - 故事生成器 4.0</title>
+    <style>
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-hover: #e9ecef;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --text-muted: #adb5bd;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --border: rgba(0, 0, 0, 0.1);
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .menu-btn {
+            padding: 16px 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: block;
+            box-shadow: var(--shadow);
+        }
+
+        .menu-btn:hover {
+            background: var(--bg-card);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .loading {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .error {
+            color: var(--danger);
+            padding: 20px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--radius);
+            margin: 20px auto;
+            max-width: 400px;
+        }
+
+        .world-select {
+            margin-top: 40px;
+        }
+
+        .world-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+
+        .world-item {
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .world-item:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent);
+        }
+
+        .no-worlds {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <a href="../../index.html" class="back-btn" style="position:fixed;top:20px;left:20px;padding:10px 20px;background:var(--bg-hover);border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);text-decoration:none;z-index:100;transition:all 0.2s;">← 返回</a>
+    <div class="container">
+        <h1>故事生成器 4.0</h1>
+        
+        <div id="content">
+            <p class="loading">加载中...</p>
+        </div>
+    </div>
+
+    <script src="../js/engine.js"></script>
+    <script src="../js/mini-ai.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const content = document.getElementById('content');
+            
+            const worldId = localStorage.getItem('currentWorldId');
+            
+            if (!worldId) {
+                showWorldSelection();
+                return;
+            }
+
+            const world = window.DataManager ? window.DataManager.getWorld(worldId) : null;
+            
+            if (!world) {
+                showWorldSelection();
+                return;
+            }
+
+            startStory();
+        });
+
+        function showWorldSelection() {
+            const content = document.getElementById('content');
+            
+            let html = `
+                <div class="world-select">
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">请先选择或创建一个世界</p>
+                    <div class="world-list" id="worldList"></div>
+                    <a href="#" class="menu-btn" onclick="createNewWorld()">+ 创建新世界</a>
+                </div>
+            `;
+            
+            content.innerHTML = html;
+
+            if (window.DataManager) {
+                const worlds = window.DataManager.getWorlds();
+                const list = document.getElementById('worldList');
+                
+                if (worlds.length === 0) {
+                    list.innerHTML = '<p class="no-worlds">暂无世界，请创建</p>';
+                } else {
+                    list.innerHTML = worlds.map(w => `
+                        <div class="world-item" onclick="selectWorld('${w.id}')">
+                            ${w.name}
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+
+        function selectWorld(worldId) {
+            localStorage.setItem('currentWorldId', worldId);
+            startStory();
+        }
+
+        function createNewWorld() {
+            const name = prompt('请输入世界名称:');
+            if (!name) return;
+
+            if (window.WorldManager) {
+                const world = window.WorldManager.create({
+                    name: name,
+                    type: '自定义',
+                    background: '这是一个新世界...',
+                    worldview: '',
+                    rules: [],
+                    keywords: [],
+                    tone: '中性'
+                });
+
+                localStorage.setItem('currentWorldId', world.id);
+                startStory();
+            }
+        }
+
+        function startStory() {
+            window.location.href = 'story/immersive.html';
+        }
+    </script>
+</body>
+</html>

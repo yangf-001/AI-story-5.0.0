@@ -3,10 +3,3434 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI故事生成器</title>
-    <meta http-equiv="refresh" content="0; url=./main/index.html">
+    <title>故事生成器 4.0</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-hover: #e9ecef;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --text-muted: #adb5bd;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --border: rgba(0, 0, 0, 0.1);
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 220px 1fr 260px;
+            min-height: 100vh;
+            gap: 0;
+        }
+
+        .sidebar {
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar-header {
+            padding: 10px 0 30px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .sidebar-header .version {
+            font-size: 0.75rem;
+            color: var(--accent);
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .nav-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .nav-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .nav-btn .icon {
+            font-size: 1.2rem;
+        }
+
+        .main-content {
+            padding: 30px 40px;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        .world-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .world-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .world-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .world-card .name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .world-card .type {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .world-card .info {
+            display: flex;
+            gap: 16px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .world-card .actions {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .world-card:hover .actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--bg-hover);
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .action-btn.delete:hover {
+            background: var(--danger);
+        }
+
+        .create-card {
+            background: transparent;
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 150px;
+        }
+
+        .create-card:hover {
+            border-color: var(--accent);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .create-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .create-card .text {
+            color: var(--text-muted);
+        }
+
+        .right-panel {
+            background: var(--bg-card);
+            border-left: 1px solid var(--border);
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 100vh;
+            box-shadow: var(--shadow);
+        }
+
+        .panel-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .time-display {
+            background: var(--bg-hover);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .time-display .time {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .time-display .date {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .character-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .character-mini {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .character-mini:hover {
+            background: var(--bg-hover);
+        }
+
+        .character-mini .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg-hover);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .character-mini .info {
+            flex: 1;
+        }
+
+        .character-mini .name {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .character-mini .status {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .task-item {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.85rem;
+        }
+
+        .task-item .title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .task-item .desc {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .task-item.with-icon {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .task-item .task-icon {
+            font-size: 1.2rem;
+        }
+
+        .goal-item {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .goal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .goal-icon {
+            font-size: 1.2rem;
+        }
+
+        .goal-title {
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .goal-delete {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0 4px;
+        }
+
+        .goal-delete:hover {
+            color: var(--danger);
+        }
+
+        .goal-desc {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        .goal-progress-bar {
+            height: 6px;
+            background: var(--bg-hover);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .goal-progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .goal-progress-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .milestone-list {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+
+        .milestone-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .milestone-item:hover {
+            color: var(--text-primary);
+        }
+
+        .milestone-item.completed {
+            color: var(--success);
+        }
+
+        .milestone-check {
+            width: 18px;
+            text-align: center;
+        }
+
+        .goal-empty {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+        }
+
+        .goal-empty .btn {
+            margin-top: 12px;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: var(--accent);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .story-reader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            z-index: 1500;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .story-reader-header {
+            padding: 16px 20px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .story-reader-header h2 {
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .story-reader-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .story-reader-scene {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .story-reader-scene:last-child {
+            border-bottom: none;
+        }
+
+        .story-reader-text {
+            line-height: 2;
+            font-size: 1rem;
+            color: var(--text-primary);
+            white-space: pre-wrap;
+        }
+
+        .story-reader-choices {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .story-reader-footer {
+            padding: 16px 20px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.3rem;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--bg-hover);
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .slider-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .slider-group input[type="range"] {
+            flex: 1;
+        }
+
+        .slider-group .value {
+            min-width: 50px;
+            text-align: right;
+            color: var(--accent);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-item input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin: 24px 0 16px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .setting-section {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .setting-section.collapsed .setting-content {
+            display: none;
+        }
+
+        .setting-section h4 {
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .setting-section .toggle-btn {
+            background: #3b82f6;
+            border: 1px solid #3b82f6;
+            border-radius: 6px;
+            padding: 6px 16px;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .setting-section .toggle-btn:hover {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+
+        .setting-section.collapsed .toggle-btn {
+            background: #10b981;
+            border-color: #10b981;
+        }
+
+        .setting-section h4::after {
+            display: none;
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .setting-row label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .setting-row input[type="range"] {
+            width: 150px;
+        }
+
+        .setting-section.warning {
+            border: 1px solid var(--warning);
+        }
+
+        .setting-section.warning h4 {
+            color: var(--warning);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 24px;
+            transform: translateX(120%);
+            transition: transform 0.3s;
+            z-index: 2000;
+        }
+
+        .notification.active {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-color: var(--success);
+        }
+
+        .notification.error {
+            border-color: var(--danger);
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            color: var(--text-muted);
+        }
+
+        .loading::after {
+            content: '';
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .story-loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+        }
+
+        .story-loading-overlay .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .story-loading-overlay p {
+            color: white;
+            margin-top: 20px;
+            font-size: 1.1rem;
+        }
+
+        .story-loading-progress {
+            width: 200px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .story-loading-progress-bar {
+            height: 100%;
+            background: #3b82f6;
+            border-radius: 3px;
+            animation: progress 2s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 10px;
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+
+        .mobile-nav-items {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .mobile-nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+
+        .mobile-nav-btn.active {
+            color: var(--accent);
+        }
+
+        .mobile-nav-btn .icon {
+            font-size: 1.4rem;
+        }
+
+        .mobile-settings-menu {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+
+        .mobile-settings-menu .mobile-nav-btn {
+            justify-content: flex-start;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .mobile-settings-menu .mobile-nav-btn:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 1200px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                padding-bottom: 70px;
+            }
+            .sidebar, .right-panel {
+                display: none;
+            }
+            .mobile-nav {
+                display: block;
+            }
+            .main-content {
+                padding: 20px;
+                max-height: calc(100vh - 70px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 1.4rem;
+            }
+            .world-list {
+                grid-template-columns: 1fr;
+            }
+            .setting-section {
+                padding: 16px;
+            }
+        }
+
+        /* ==================== 色色系统V2样式 ==================== */
+        .hentai-panel {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .hentai-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hentai-header h3 {
+            font-size: 1.2rem;
+            color: var(--accent);
+        }
+
+        .hentai-intensity {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: var(--bg-hover);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .hentai-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .hentai-tab {
+            padding: 8px 14px;
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .hentai-tab:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .hentai-tab.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .hentai-content {
+            background: var(--bg-hover);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            max-height: 300px;
+            overflow-y: auto;
+            transition: max-height 0.3s ease;
+        }
+
+        .hentai-content.expanded {
+            max-height: 800px;
+        }
+
+        .expand-btn {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+
+        .expand-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .hentai-option-group h4 {
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .hentai-options, .hentai-item-categories, .hentai-body-parts, .hentai-poses, .hentai-locations, .hentai-styles, .hentai-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .hentai-option-btn, .hentai-category-btn, .body-part-btn, .pose-btn, .location-btn, .style-btn, .action-btn, .items-btn, .body-btn, .dialogue-btn {
+            padding: 8px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .hentai-option-btn:hover, .hentai-category-btn:hover, .body-part-btn:hover, .pose-btn:hover, .location-btn:hover, .style-btn:hover, .action-btn:hover, .items-btn:hover, .body-btn:hover, .dialogue-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .dialogue-buttons, .items-buttons, .action-buttons, .body-buttons, .pose-buttons, .location-buttons, .style-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .dialogue-category, .items-category, .action-category, .body-category, .pose-category, .location-category, .style-category {
+            margin-bottom: 16px;
+        }
+
+        .dialogue-category h5, .items-category h5, .action-category h5, .body-category h5, .pose-category h5, .location-category h5, .style-category h5 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .option-icon {
+            margin-right: 6px;
+        }
+
+        .body-region, .pose-category, .location-category, .style-category, .action-category {
+            margin-bottom: 12px;
+        }
+
+        .body-region h5, .pose-category h5, .location-category h5, .style-category h5, .action-category h5 {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .body-parts, .pose-list, .location-list, .style-list, .action-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .hentai-choices {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .selected-items {
+            margin-bottom: 12px;
+        }
+
+        .selected-items h4 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .sel-tag {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            margin: 4px 4px 4px 0;
+        }
+
+        .hentai-submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .hentai-submit-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .hentai-free-input {
+            display: flex;
+            gap: 12px;
+        }
+
+        .hentai-free-input input, .hentai-free-input textarea {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .hentai-free-input input:focus, .hentai-free-input textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .hentai-free-input button {
+            padding: 12px 24px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .hentai-hint {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+        }
+
+        .hentai-settings-v2 .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .setting-hint {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .hentai-keyword-search {
+            margin-bottom: 16px;
+        }
+
+        .hentai-keyword-search input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .hentai-keyword-search input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .keyword-category {
+            margin-bottom: 16px;
+        }
+
+        .keyword-category h5 {
+            font-size: 0.85rem;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .keyword-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .keyword-btn {
+            padding: 8px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .keyword-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .search-results h5 {
+            font-size: 0.85rem;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+    </style>
 </head>
 <body>
-    <p>正在跳转到AI故事生成器...</p>
+    <div id="storyLoadingOverlay" class="story-loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p id="storyLoadingText">正在生成故事...</p>
+        <div class="story-loading-progress">
+            <div class="story-loading-progress-bar"></div>
+        </div>
+    </div>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>故事生成器</h1>
+                <span class="version">4.0 全新版本</span>
+            </div>
+
+            <nav class="nav-section">
+                <div class="nav-title">导航</div>
+                <button class="nav-btn active" onclick="showPage('worlds')">
+                    <span class="icon">🌍</span>
+                    世界管理
+                </button>
+                <button class="nav-btn" onclick="showPage('story')">
+                    <span class="icon">📖</span>
+                    开始故事
+                </button>
+                <button class="nav-btn" onclick="showPage('events')">
+                    <span class="icon">⚡</span>
+                    事件管理
+                </button>
+                <button class="nav-btn" onclick="showPage('history')">
+                    <span class="icon">📜</span>
+                    故事历史
+                </button>
+            </nav>
+
+            <nav class="nav-section">
+                <div class="nav-title">设置</div>
+                <button class="nav-btn" onclick="showPage('api')">
+                    <span class="icon">⚙️</span>
+                    API 配置
+                </button>
+                <button class="nav-btn" onclick="showPage('hentai')">
+                    <span class="icon">💜</span>
+                    成人设置
+                </button>
+            </nav>
+        </aside>
+
+        <main class="main-content" id="mainContent">
+            <div class="loading">加载中...</div>
+        </main>
+
+        <aside class="right-panel" id="rightPanel">
+            <div class="time-display">
+                <div class="time" id="currentTime">00:00</div>
+                <div class="date" id="currentDate">加载中...</div>
+            </div>
+
+            <div class="panel-title">当前世界角色</div>
+            <div class="character-list" id="characterList">
+                <div class="empty-state">暂无角色</div>
+            </div>
+
+            <div class="panel-title" style="margin-top: 24px;">任务建议</div>
+            <div class="task-list" id="taskList">
+                <div class="empty-state">暂无任务</div>
+            </div>
+
+            <div class="panel-title" style="margin-top: 24px;">目标追踪</div>
+            <div id="goalPanelContent">
+                <div class="empty-state">暂无目标</div>
+            </div>
+        </aside>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">标题</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+            </div>
+        </div>
+    </div>
+
+    <div class="story-reader" id="storyReader" style="display: none; z-index: 1500;">
+        <div class="story-reader-header">
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <h2 id="storyReaderTitle">故事阅读</h2>
+                <button class="btn btn-secondary" onclick="showStoryCharacters()">👥 角色</button>
+            </div>
+            <button class="btn btn-secondary" onclick="closeStoryReader()">返回设置</button>
+        </div>
+        <div class="story-reader-content" id="storyReaderContent">
+        </div>
+        <div class="story-reader-footer" id="storyReaderFooter">
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <nav class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-items">
+            <button class="mobile-nav-btn active" onclick="showPage('worlds'); updateMobileNav('worlds')">
+                <span class="icon">🌍</span>
+                <span>世界</span>
+            </button>
+            <button class="mobile-nav-btn" onclick="showPage('story'); updateMobileNav('story')">
+                <span class="icon">📖</span>
+                <span>故事</span>
+            </button>
+            <button class="mobile-nav-btn" onclick="showPage('events'); updateMobileNav('events')">
+                <span class="icon">⚡</span>
+                <span>事件</span>
+            </button>
+            <button class="mobile-nav-btn" onclick="showSettingsMenu()">
+                <span class="icon">⚙️</span>
+                <span>设置</span>
+            </button>
+        </div>
+        <div class="mobile-settings-menu" id="mobileSettingsMenu" style="display: none; position: absolute; bottom: 100%; left: 0; right: 0; background: var(--bg-card); border-top: 1px solid var(--border); box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 101;">
+            <button class="mobile-nav-btn" onclick="showPage('api'); updateMobileNav('api'); document.getElementById('mobileSettingsMenu').style.display = 'none'">
+                <span class="icon">🔧</span>
+                <span>API 配置</span>
+            </button>
+            <button class="mobile-nav-btn" onclick="showPage('hentai'); updateMobileNav('hentai'); document.getElementById('mobileSettingsMenu').style.display = 'none'">
+                <span class="icon">💜</span>
+                <span>成人设置</span>
+            </button>
+        </div>
+    </nav>
+
+    <script src="js/mini-ai.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/plugins/hentai-plugin.js"></script>
+    <script src="js/plugins/hentai-v2-plugin.js"></script>
+    <script src="js/plugins/hentai-v3-plugin.js"></script>
+    <script>
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        let currentWorldId = localStorage.getItem('currentWorldId');
+        let currentPage = 'worlds';
+
+        function init() {
+            updateTimeDisplay();
+            setInterval(updateTimeDisplay, 1000);
+
+            if (window.DataManager && window.WorldManager) {
+                renderPage(currentPage);
+            } else {
+                setTimeout(init, 200);
+            }
+        }
+
+        function updateTimeDisplay() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent =
+                now.getHours().toString().padStart(2, '0') + ':' +
+                now.getMinutes().toString().padStart(2, '0');
+
+            const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+            document.getElementById('currentDate').textContent =
+                `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日 ${weekdays[now.getDay()]}`;
+        }
+
+        function showPage(page, event) {
+            currentPage = page;
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            event?.target?.closest('.nav-btn')?.classList.add('active');
+            renderPage(page);
+            updateMobileNav(page);
+        }
+
+        function updateMobileNav(page) {
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => btn.classList.remove('active'));
+            const navMap = { 'worlds': 0, 'story': 1, 'events': 2, 'history': 2, 'api': 3, 'hentai': 3 };
+            const idx = navMap[page] ?? 0;
+            document.querySelectorAll('.mobile-nav-btn')[idx]?.classList.add('active');
+        }
+
+        function showSettingsMenu() {
+            const menu = document.getElementById('mobileSettingsMenu');
+            menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
+        }
+
+        // 点击页面其他地方关闭设置菜单
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('mobileSettingsMenu');
+            const settingsBtn = document.querySelector('.mobile-nav-btn[onclick="showSettingsMenu()"]');
+            if (menu.style.display === 'flex' && !menu.contains(event.target) && !settingsBtn.contains(event.target)) {
+                menu.style.display = 'none';
+            }
+        });
+
+        function toggleSettingSection(el) {
+            el.classList.toggle('collapsed');
+        }
+
+        function renderPage(page) {
+            const main = document.getElementById('mainContent');
+
+            switch(page) {
+                case 'worlds':
+                    renderWorldsPage(main);
+                    break;
+                case 'story':
+                    renderStoryPage(main);
+                    break;
+                case 'events':
+                    renderEventsPage(main);
+                    break;
+                case 'history':
+                    renderHistoryPage(main);
+                    break;
+                case 'api':
+                    renderAPIPage(main);
+                    break;
+                case 'hentai':
+                    renderHentaiPage(main);
+                    break;
+            }
+
+            if (currentWorldId) {
+                loadWorldData(currentWorldId);
+            }
+        }
+
+        function renderEventsPage(container) {
+            if (!currentWorldId) {
+                container.innerHTML = `
+                    <h1 class="page-title">事件管理</h1>
+                    <p class="page-subtitle">请先选择一个世界</p>
+                    <button class="btn" onclick="showPage('worlds')">选择世界</button>
+                `;
+                return;
+            }
+
+            const events = window.DataManager?.getEvents(currentWorldId) || [];
+            const world = window.WorldManager?.get(currentWorldId);
+
+            container.innerHTML = `
+                <h1 class="page-title">事件管理</h1>
+                <p class="page-subtitle">当前世界: ${world?.name || '未知'}</p>
+
+                <div style="margin-bottom: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button class="btn" onclick="exportEvents()">📤 导出事件</button>
+                    <button class="btn" onclick="showImportEventsModal()">📥 导入事件</button>
+                </div>
+
+                <div class="world-list">
+                    ${events.map(e => `
+                        <div class="world-card">
+                            <div class="actions">
+                                <button class="action-btn" onclick="editEvent('${e.id}')">✏️</button>
+                                <button class="action-btn delete" onclick="deleteEvent('${e.id}')">🗑️</button>
+                            </div>
+                            <div class="name">${e.name}</div>
+                            <div class="type">${e.type || '自定义'}</div>
+                            <div class="info">
+                                <span>🎯 ${e.priority}/10</span>
+                                <span>${e.isActive ? '✅ 激活' : '❌ 未激活'}</span>
+                            </div>
+                            <div style="margin-top: 8px; font-size: 0.85rem; color: var(--text-secondary);">
+                                ${e.description || '无描述'}
+                            </div>
+                            ${e.cg ? `
+                                <div style="margin-top: 8px; font-size: 0.8rem; color: var(--accent);">
+                                    🖼️ 包含CG
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('')}
+
+                    <div class="create-card" onclick="showCreateEventModal()">
+                        <div class="icon">➕</div>
+                        <div class="text">创建新事件</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function exportEvents() {
+            const eventsJson = window.DataManager?.exportEvents(currentWorldId);
+            if (eventsJson) {
+                const blob = new Blob([eventsJson], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `events_${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showNotification('事件导出成功', 'success');
+            } else {
+                showNotification('导出失败', 'error');
+            }
+        }
+
+        function showImportEventsModal() {
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            const modalOverlay = document.getElementById('modalOverlay');
+            
+            if (!modalTitle || !modalBody || !modalOverlay) {
+                showNotification('模态框元素未找到', 'error');
+                return;
+            }
+            
+            modalTitle.textContent = '导入事件';
+            modalBody.innerHTML = `
+                <div class="form-group">
+                    <label>选择JSON文件</label>
+                    <input type="file" id="importEventsFile" accept=".json" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);">
+                </div>
+                <div class="form-group" style="margin-top: 16px;">
+                    <label>或粘贴JSON内容</label>
+                    <textarea id="importEventsText" placeholder="粘贴事件JSON内容" style="width: 100%; min-height: 200px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);"></textarea>
+                </div>
+                <button class="btn" onclick="importEvents()" style="width: 100%;">导入事件</button>
+            `;
+            modalOverlay.classList.add('active');
+        }
+
+        function importEvents() {
+            const fileInput = document.getElementById('importEventsFile');
+            const textInput = document.getElementById('importEventsText');
+            
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const eventsJson = e.target.result;
+                        const result = window.DataManager?.importEvents(currentWorldId, eventsJson);
+                        if (result) {
+                            showNotification(`成功导入 ${result} 个事件`, 'success');
+                            closeModal();
+                            renderEventsPage(document.getElementById('mainContent'));
+                        } else {
+                            showNotification('导入失败，请检查JSON格式', 'error');
+                        }
+                    } catch (error) {
+                        showNotification('读取文件失败: ' + error.message, 'error');
+                    }
+                };
+                reader.onerror = function() {
+                    showNotification('读取文件失败', 'error');
+                };
+                reader.readAsText(file);
+            } else if (textInput.value.trim()) {
+                const eventsJson = textInput.value.trim();
+                const result = window.DataManager?.importEvents(currentWorldId, eventsJson);
+                if (result) {
+                    showNotification(`成功导入 ${result} 个事件`, 'success');
+                    closeModal();
+                    renderEventsPage(document.getElementById('mainContent'));
+                } else {
+                    showNotification('导入失败，请检查JSON格式', 'error');
+                }
+            } else {
+                showNotification('请选择文件或粘贴JSON内容', 'error');
+            }
+        }
+
+        function showCreateEventModal() {
+            const characters = window.DataManager?.getMainCharacters(currentWorldId) || [];
+            
+            document.getElementById('modalTitle').textContent = '创建新事件';
+            document.getElementById('modalBody').innerHTML = `
+                <div class="form-group">
+                    <label>事件名称</label>
+                    <input type="text" id="eventName" placeholder="输入事件名称">
+                </div>
+                <div class="form-group">
+                    <label>事件描述</label>
+                    <textarea id="eventDescription" rows="3" placeholder="描述事件内容"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>事件类型</label>
+                    <select id="eventType" style="width:100%;padding:12px 16px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:1rem;">
+                        <option value="story">剧情事件</option>
+                        <option value="character">角色事件</option>
+                        <option value="random">随机事件</option>
+                        <option value="cg">CG事件</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>优先级 (1-10)</label>
+                    <input type="number" id="eventPriority" min="1" max="10" value="5">
+                </div>
+                <div class="form-group">
+                    <label>CG描述</label>
+                    <input type="text" id="eventCG" placeholder="描述CG内容">
+                </div>
+                <div class="form-group">
+                    <label>触发条件</label>
+                    <select id="conditionType" onchange="updateConditionForm()" style="width:100%;padding:12px 16px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:1rem;">
+                        <option value="none">无条件</option>
+                        <option value="character">角色条件</option>
+                        <option value="story">故事条件</option>
+                    </select>
+                </div>
+                <div id="conditionForm" class="form-group">
+                    <!-- 条件表单将根据选择动态生成 -->
+                </div>
+                <div class="form-group">
+                    <label>事件动作</label>
+                    <select id="actionType" onchange="updateActionForm()" style="width:100%;padding:12px 16px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:1rem;">
+                        <option value="none">无动作</option>
+                        <option value="characterStats">角色属性变化</option>
+                        <option value="task">任务操作</option>
+                    </select>
+                </div>
+                <div id="actionForm" class="form-group">
+                    <!-- 动作表单将根据选择动态生成 -->
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="eventActive" checked>
+                        激活事件
+                    </label>
+                </div>
+                <button class="btn" onclick="createEvent()">创建事件</button>
+            `;
+            document.getElementById('modalOverlay').classList.add('active');
+            updateConditionForm();
+            updateActionForm();
+        }
+
+        function updateConditionForm() {
+            const conditionType = document.getElementById('conditionType').value;
+            const form = document.getElementById('conditionForm');
+            const characters = window.DataManager?.getMainCharacters(currentWorldId) || [];
+            
+            switch(conditionType) {
+                case 'character':
+                    form.innerHTML = `
+                        <label>选择角色</label>
+                        <select id="conditionCharacter" style="width:100%;padding:12px 16px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:1rem;">
+                            ${characters.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                        </select>
+                        <label style="margin-top:12px;">最低属性值</label>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                            <div>
+                                <label>好感度</label>
+                                <input type="number" id="conditionAffection" min="0" max="100" value="50">
+                            </div>
+                            <div>
+                                <label>性欲</label>
+                                <input type="number" id="conditionArousal" min="0" max="100" value="50">
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'story':
+                    form.innerHTML = `
+                        <label>最小场景数</label>
+                        <input type="number" id="conditionSceneCount" min="1" value="1">
+                        <label style="margin-top:12px;">关键词（逗号分隔）</label>
+                        <input type="text" id="conditionKeywords" placeholder="输入关键词">
+                    `;
+                    break;
+                default:
+                    form.innerHTML = '<p style="color:var(--text-muted);">无触发条件</p>';
+            }
+        }
+
+        function updateActionForm() {
+            const actionType = document.getElementById('actionType').value;
+            const form = document.getElementById('actionForm');
+            const characters = window.DataManager?.getMainCharacters(currentWorldId) || [];
+            
+            switch(actionType) {
+                case 'characterStats':
+                    form.innerHTML = `
+                        <label>选择角色</label>
+                        <select id="actionCharacter" style="width:100%;padding:12px 16px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:1rem;">
+                            ${characters.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                        </select>
+                        <label style="margin-top:12px;">属性变化</label>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                            <div>
+                                <label>好感度</label>
+                                <input type="number" id="actionAffection" value="10">
+                            </div>
+                            <div>
+                                <label>性欲</label>
+                                <input type="number" id="actionArousal" value="10">
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'task':
+                    form.innerHTML = `
+                        <label>任务标题</label>
+                        <input type="text" id="actionTaskTitle" placeholder="输入任务标题">
+                        <label style="margin-top:12px;">任务描述</label>
+                        <textarea id="actionTaskDescription" rows="2" placeholder="描述任务内容"></textarea>
+                    `;
+                    break;
+                default:
+                    form.innerHTML = '<p style="color:var(--text-muted);">无事件动作</p>';
+            }
+        }
+
+        function createEvent() {
+            const name = document.getElementById('eventName').value.trim();
+            const description = document.getElementById('eventDescription').value.trim();
+            const type = document.getElementById('eventType').value;
+            const priority = parseInt(document.getElementById('eventPriority').value) || 5;
+            const cg = document.getElementById('eventCG').value.trim();
+            const isActive = document.getElementById('eventActive').checked;
+            
+            if (!name) {
+                showNotification('请输入事件名称', 'error');
+                return;
+            }
+            
+            const conditionType = document.getElementById('conditionType').value;
+            let conditions = null;
+            
+            if (conditionType === 'character') {
+                const charId = document.getElementById('conditionCharacter').value;
+                const affection = parseInt(document.getElementById('conditionAffection').value) || 0;
+                const arousal = parseInt(document.getElementById('conditionArousal').value) || 0;
+                conditions = {
+                    character: {
+                        id: charId,
+                        stats: {
+                            affection,
+                            arousal
+                        }
+                    }
+                };
+            } else if (conditionType === 'story') {
+                const sceneCount = parseInt(document.getElementById('conditionSceneCount').value) || 1;
+                const keywords = document.getElementById('conditionKeywords').value.split(',').map(k => k.trim()).filter(Boolean);
+                conditions = {
+                    story: {
+                        sceneCount,
+                        keywords
+                    }
+                };
+            }
+            
+            const actionType = document.getElementById('actionType').value;
+            let actions = null;
+            
+            if (actionType === 'characterStats') {
+                const charId = document.getElementById('actionCharacter').value;
+                const affection = parseInt(document.getElementById('actionAffection').value) || 0;
+                const arousal = parseInt(document.getElementById('actionArousal').value) || 0;
+                actions = {
+                    characterStats: {
+                        [charId]: {
+                            affection,
+                            arousal
+                        }
+                    }
+                };
+            } else if (actionType === 'task') {
+                const taskTitle = document.getElementById('actionTaskTitle').value.trim();
+                const taskDescription = document.getElementById('actionTaskDescription').value.trim();
+                if (taskTitle) {
+                    actions = {
+                        tasks: [{
+                            type: 'add',
+                            config: {
+                                title: taskTitle,
+                                description: taskDescription
+                            }
+                        }]
+                    };
+                }
+            }
+            
+            const event = {
+                name,
+                description,
+                type,
+                priority,
+                cg,
+                isActive,
+                conditions,
+                actions
+            };
+            
+            window.DataManager?.addEvent(currentWorldId, event);
+            closeModal();
+            renderEventsPage(document.getElementById('mainContent'));
+            showNotification('事件创建成功', 'success');
+        }
+
+        function editEvent(eventId) {
+            const event = window.DataManager?.getEvent(currentWorldId, eventId);
+            if (!event) return;
+            
+            const characters = window.DataManager?.getMainCharacters(currentWorldId) || [];
+            
+            document.getElementById('modalTitle').textContent = '编辑事件';
+            document.getElementById('modalBody').innerHTML = `
+                <input type="hidden" id="editEventId" value="${eventId}">
+                <div class="form-group">
+                    <label>事件名称</label>
+                    <input type="text" id="editEventName" value="${event.name}" placeholder="输入事件名称">
+                </div>
+                <div class="form-group">
+                    <label>事件描述</label>
+                    <textarea id="editEventDescription" rows="3" placeholder="描述事件内容">${event.description || ''}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>事件类型</label>
+                    <select id="editEventType" style="width:100%;padding:12px 16px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:1rem;">
+                        <option value="story" ${event.type === 'story' ? 'selected' : ''}>剧情事件</option>
+                        <option value="character" ${event.type === 'character' ? 'selected' : ''}>角色事件</option>
+                        <option value="random" ${event.type === 'random' ? 'selected' : ''}>随机事件</option>
+                        <option value="cg" ${event.type === 'cg' ? 'selected' : ''}>CG事件</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>优先级 (1-10)</label>
+                    <input type="number" id="editEventPriority" min="1" max="10" value="${event.priority || 5}">
+                </div>
+                <div class="form-group">
+                    <label>CG描述</label>
+                    <input type="text" id="editEventCG" value="${event.cg || ''}" placeholder="描述CG内容">
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="editEventActive" ${event.isActive ? 'checked' : ''}>
+                        激活事件
+                    </label>
+                </div>
+                <button class="btn" onclick="updateEvent()">保存修改</button>
+            `;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function updateEvent() {
+            const eventId = document.getElementById('editEventId').value;
+            const name = document.getElementById('editEventName').value.trim();
+            const description = document.getElementById('editEventDescription').value.trim();
+            const type = document.getElementById('editEventType').value;
+            const priority = parseInt(document.getElementById('editEventPriority').value) || 5;
+            const cg = document.getElementById('editEventCG').value.trim();
+            const isActive = document.getElementById('editEventActive').checked;
+            
+            if (!name) {
+                showNotification('请输入事件名称', 'error');
+                return;
+            }
+            
+            const updates = {
+                name,
+                description,
+                type,
+                priority,
+                cg,
+                isActive
+            };
+            
+            window.DataManager?.updateEvent(currentWorldId, eventId, updates);
+            closeModal();
+            renderEventsPage(document.getElementById('mainContent'));
+            showNotification('事件更新成功', 'success');
+        }
+
+        function deleteEvent(eventId) {
+            if (confirm('确定要删除这个事件吗？')) {
+                window.DataManager?.deleteEvent(currentWorldId, eventId);
+                renderEventsPage(document.getElementById('mainContent'));
+                showNotification('事件删除成功', 'success');
+            }
+        }
+
+        function renderWorldsPage(container) {
+            const worlds = window.WorldManager?.getAll() || [];
+
+            container.innerHTML = `
+                <h1 class="page-title">世界管理</h1>
+                <p class="page-subtitle">创建和管理你的故事世界</p>
+
+                ${currentWorldId ? `
+                    <div style="margin-bottom: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
+                        <button class="btn" onclick="exportWorldSettings()">📤 导出世界设定</button>
+                        <button class="btn" onclick="exportCharacters()">📤 导出人设</button>
+                        <button class="btn" onclick="showImportWorldSettingsModal()">📥 导入世界设定</button>
+                        <button class="btn" onclick="showImportCharactersModal()">📥 导入人设</button>
+                    </div>
+                ` : ''}
+
+                <div class="world-list">
+                    ${worlds.map(w => `
+                        <div class="world-card" onclick="enterWorld('${w.id}')">
+                            <div class="actions">
+                                <button class="action-btn" onclick="event.stopPropagation(); editWorld('${w.id}')">✏️</button>
+                                <button class="action-btn delete" onclick="event.stopPropagation(); deleteWorld('${w.id}')">🗑️</button>
+                            </div>
+                            <div class="name">${w.name}</div>
+                            <div class="type">${w.type || '自定义'}</div>
+                            <div class="info">
+                                <span>🎭 ${w.settings?.tone || '中性'}</span>
+                                <span>📅 ${new Date(w.createdAt).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+
+                    <div class="create-card" onclick="showCreateWorldModal()">
+                        <div class="icon">➕</div>
+                        <div class="text">创建新世界</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function exportWorldSettings() {
+            const settingsJson = window.DataManager?.exportWorldSettings(currentWorldId);
+            if (settingsJson) {
+                const blob = new Blob([settingsJson], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `world_settings_${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showNotification('世界设定导出成功', 'success');
+            } else {
+                showNotification('导出失败', 'error');
+            }
+        }
+
+        function exportCharacters() {
+            const charactersJson = window.DataManager?.exportCharacters(currentWorldId);
+            if (charactersJson) {
+                const blob = new Blob([charactersJson], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `characters_${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showNotification('人设导出成功', 'success');
+            } else {
+                showNotification('导出失败', 'error');
+            }
+        }
+
+        function showImportWorldSettingsModal() {
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            const modalOverlay = document.getElementById('modalOverlay');
+            
+            if (!modalTitle || !modalBody || !modalOverlay) {
+                showNotification('模态框元素未找到', 'error');
+                return;
+            }
+            
+            modalTitle.textContent = '导入世界设定';
+            modalBody.innerHTML = `
+                <div class="form-group">
+                    <label>选择JSON文件</label>
+                    <input type="file" id="importWorldSettingsFile" accept=".json" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);">
+                </div>
+                <div class="form-group" style="margin-top: 16px;">
+                    <label>或粘贴JSON内容</label>
+                    <textarea id="importWorldSettingsText" placeholder="粘贴世界设定JSON内容" style="width: 100%; min-height: 200px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);"></textarea>
+                </div>
+                <button class="btn" onclick="importWorldSettings()" style="width: 100%;">导入世界设定</button>
+            `;
+            modalOverlay.classList.add('active');
+        }
+
+        function importWorldSettings() {
+            const fileInput = document.getElementById('importWorldSettingsFile');
+            const textInput = document.getElementById('importWorldSettingsText');
+            
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const settingsJson = e.target.result;
+                        const result = window.DataManager?.importWorldSettings(currentWorldId, settingsJson);
+                        if (result) {
+                            showNotification('世界设定导入成功', 'success');
+                            closeModal();
+                            renderWorldsPage(document.getElementById('mainContent'));
+                        } else {
+                            showNotification('导入失败，请检查JSON格式', 'error');
+                        }
+                    } catch (error) {
+                        showNotification('读取文件失败: ' + error.message, 'error');
+                    }
+                };
+                reader.onerror = function() {
+                    showNotification('读取文件失败', 'error');
+                };
+                reader.readAsText(file);
+            } else if (textInput.value.trim()) {
+                const settingsJson = textInput.value.trim();
+                const result = window.DataManager?.importWorldSettings(currentWorldId, settingsJson);
+                if (result) {
+                    showNotification('世界设定导入成功', 'success');
+                    closeModal();
+                    renderWorldsPage(document.getElementById('mainContent'));
+                } else {
+                    showNotification('导入失败，请检查JSON格式', 'error');
+                }
+            } else {
+                showNotification('请选择文件或粘贴JSON内容', 'error');
+            }
+        }
+
+        function showImportCharactersModal() {
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            const modalOverlay = document.getElementById('modalOverlay');
+            
+            if (!modalTitle || !modalBody || !modalOverlay) {
+                showNotification('模态框元素未找到', 'error');
+                return;
+            }
+            
+            modalTitle.textContent = '导入人设';
+            modalBody.innerHTML = `
+                <div class="form-group">
+                    <label>选择JSON文件</label>
+                    <input type="file" id="importCharactersFile" accept=".json" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);">
+                </div>
+                <div class="form-group" style="margin-top: 16px;">
+                    <label>或粘贴JSON内容</label>
+                    <textarea id="importCharactersText" placeholder="粘贴人设JSON内容" style="width: 100%; min-height: 200px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);"></textarea>
+                </div>
+                <button class="btn" onclick="importCharacters()" style="width: 100%;">导入人设</button>
+            `;
+            modalOverlay.classList.add('active');
+        }
+
+        function importCharacters() {
+            const fileInput = document.getElementById('importCharactersFile');
+            const textInput = document.getElementById('importCharactersText');
+            
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const charactersJson = e.target.result;
+                        const result = window.DataManager?.importCharacters(currentWorldId, charactersJson);
+                        if (result) {
+                            showNotification(`成功导入 ${result} 个人设`, 'success');
+                            closeModal();
+                            renderWorldsPage(document.getElementById('mainContent'));
+                        } else {
+                            showNotification('导入失败，请检查JSON格式', 'error');
+                        }
+                    } catch (error) {
+                        showNotification('读取文件失败: ' + error.message, 'error');
+                    }
+                };
+                reader.onerror = function() {
+                    showNotification('读取文件失败', 'error');
+                };
+                reader.readAsText(file);
+            } else if (textInput.value.trim()) {
+                const charactersJson = textInput.value.trim();
+                const result = window.DataManager?.importCharacters(currentWorldId, charactersJson);
+                if (result) {
+                    showNotification(`成功导入 ${result} 个人设`, 'success');
+                    closeModal();
+                    renderWorldsPage(document.getElementById('mainContent'));
+                } else {
+                    showNotification('导入失败，请检查JSON格式', 'error');
+                }
+            } else {
+                showNotification('请选择文件或粘贴JSON内容', 'error');
+            }
+        }
+
+        function renderStoryPage(container) {
+            if (!currentWorldId) {
+                container.innerHTML = `
+                    <h1 class="page-title">开始故事</h1>
+                    <p class="page-subtitle">请先选择一个世界</p>
+                    <button class="btn" onclick="showPage('worlds')">选择世界</button>
+                `;
+                return;
+            }
+
+            window.DataManager?.init(currentWorldId);
+            const world = window.WorldManager?.get(currentWorldId);
+            const mainChars = window.DataManager?.getMainCharacters(currentWorldId) || [];
+            
+            const currentStory = window.DataManager?.getCurrentStory(currentWorldId);
+            const hasValidStory = currentStory && currentStory.scenes && currentStory.scenes.length > 0;
+            
+            const stories = window.DataManager?.getStories(currentWorldId) || [];
+            const hasHistoryStories = stories.length > 0;
+
+            container.innerHTML = `
+                <h1 class="page-title">${hasValidStory || hasHistoryStories ? '继续故事' : '开始故事'}</h1>
+                <p class="page-subtitle">当前世界: ${world?.name || '未知'}</p>
+
+                <div class="setting-section collapsed">
+                    <h4>
+                        故事模式
+                        <button class="toggle-btn" onclick="var p=this.parentElement.parentElement;p.classList.toggle('collapsed');this.textContent=p.classList.contains('collapsed')?'展开':'收起'">展开</button>
+                    </h4>
+                    <div class="setting-content">
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="radio" name="storyMode" value="互动" ${(world?.settings?.mode !== '小说') ? 'checked' : ''}>
+                                互动模式
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="radio" name="storyMode" value="小说" ${world?.settings?.mode === '小说' ? 'checked' : ''}>
+                                小说模式
+                            </label>
+                        </div>
+                        <p style="margin-top: 12px; color: var(--text-muted); font-size: 0.85rem;">
+                            互动模式: 用户深度参与，系统输出短段剧情<br>
+                            小说模式: 用户进行少量决定，系统输出大量剧情
+                        </p>
+                    </div>
+                </div>
+
+                <div class="setting-section collapsed">
+                    <h4>
+                        出场角色 (${mainChars.length})
+                        <button class="toggle-btn" onclick="var p=this.parentElement.parentElement;p.classList.toggle('collapsed');this.textContent=p.classList.contains('collapsed')?'展开':'收起'">展开</button>
+                    </h4>
+                    <div class="setting-content">
+                        ${mainChars.length > 0 ? mainChars.map(c => `
+                            <div class="character-mini" onclick="CharacterPanelManager?.openPanel('${currentWorldId}', '${c.id}')" style="cursor: pointer;">
+                                <div class="avatar">${c.avatar || '👤'}</div>
+                                <div class="info">
+                                    <div class="name">${c.name} ${c.baseProfile?.age ? c.baseProfile.age + '岁' : ''}</div>
+                                    <div class="status">${c.baseProfile?.personality || '未设定'}</div>
+                                </div>
+                                <button class="action-btn delete" onclick="event.stopPropagation(); deleteCharacter('${c.id}')" style="margin-left: auto;">🗑️</button>
+                            </div>
+                        `).join('') : '<p style="color: var(--text-muted);">暂无主角，请先添加角色</p>'}
+                        <div style="margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
+                            <button class="btn btn-secondary" onclick="showAddCharacterModal()">➕ 添加主角</button>
+                            <button class="btn btn-secondary" onclick="importCharacter()">📥 导入角色</button>
+                            <button class="btn btn-secondary" onclick="exportAllCharacters()">📤 导出</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
+                    ${(hasValidStory || hasHistoryStories) ? `
+                        <button class="btn" onclick="openStoryReader()" style="flex: 1; min-width: 200px;">
+                            📖 继续故事
+                        </button>
+                    ` : `
+                        <div style="flex: 1; min-width: 200px; padding: 20px; background: var(--bg-hover); border-radius: 12px; text-align: center; color: var(--text-muted);">
+                            请开始故事
+                        </div>
+                    `}
+                    <button class="btn" onclick="startNewStory()" ${mainChars.length === 0 ? 'disabled' : ''} style="flex: 1; min-width: 200px;">
+                        🚀 开始新故事
+                    </button>
+                    <button class="btn btn-secondary" onclick="showSaveManager()" style="flex: 1; min-width: 200px;">
+                        💾 存档管理
+                    </button>
+                </div>
+            `;
+        }
+
+        function showIntimateInteraction() {
+            if (!currentWorldId) {
+                showNotification('请先选择一个世界', 'error');
+                return;
+            }
+
+            const mainChars = window.DataManager?.getMainCharacters(currentWorldId) || [];
+            if (mainChars.length === 0) {
+                showNotification('请先添加角色', 'error');
+                return;
+            }
+
+            window.currentHentaiCharacters = mainChars;
+
+            const html = window.HentaiSystemV3?.renderInteractionPanel(currentWorldId, mainChars);
+            
+            document.getElementById('modalTitle').textContent = '💕 亲密互动';
+            document.getElementById('modalBody').innerHTML = html;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function showSaveManager() {
+            if (!currentWorldId) {
+                showNotification('请先选择一个世界', 'error');
+                return;
+            }
+
+            const saves = window.DataManager?.getGameSaves(currentWorldId) || [];
+            
+            let html = `
+                <div style="max-height: 400px; overflow-y: auto;">
+                    ${saves.length > 0 ? saves.map(save => `
+                        <div style="background: var(--bg-secondary); border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <h4 style="margin: 0; font-size: 1rem;">${save.name}</h4>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-secondary" onclick="loadSave('${save.id}')" style="padding: 6px 12px; font-size: 0.8rem;">加载</button>
+                                    <button class="btn btn-secondary" onclick="exportSave('${save.id}')" style="padding: 6px 12px; font-size: 0.8rem;">导出</button>
+                                    <button class="btn btn-secondary" onclick="deleteSave('${save.id}')" style="padding: 6px 12px; font-size: 0.8rem;">删除</button>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">
+                                保存时间: ${new Date(save.timestamp).toLocaleString()}
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">
+                                故事场景: ${save.story.scenes?.length || 0} 个
+                            </div>
+                        </div>
+                    `).join('') : `
+                        <div class="empty-state">
+                            <p>暂无存档</p>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">开始新故事后会自动创建存档</p>
+                        </div>
+                    `}
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <h4 style="margin-bottom: 12px;">导入存档</h4>
+                    <div class="form-group">
+                        <label>选择JSON文件</label>
+                        <input type="file" id="importSaveFile" accept=".json" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);">
+                    </div>
+                    <div class="form-group" style="margin-top: 12px;">
+                        <label>或粘贴JSON内容</label>
+                        <textarea id="importSaveText" placeholder="粘贴存档JSON内容" style="width: 100%; min-height: 100px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);"></textarea>
+                    </div>
+                    <button class="btn" onclick="importSave()" style="margin-top: 12px; width: 100%;">导入存档</button>
+                </div>
+            `;
+            
+            document.getElementById('modalTitle').textContent = '💾 存档管理';
+            document.getElementById('modalBody').innerHTML = html;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function loadSave(saveId) {
+            showStoryLoading('正在加载存档...');
+            window.StoryEngine.init(currentWorldId);
+            window.StoryEngine.loadSaveAndContinue(currentWorldId, saveId).then(story => {
+                hideStoryLoading();
+                showNotification('存档加载成功', 'success');
+                closeModal();
+                openStoryReader();
+            }).catch(err => {
+                hideStoryLoading();
+                showNotification('加载存档失败: ' + err.message, 'error');
+            });
+        }
+
+        function deleteSave(saveId) {
+            if (confirm('确定要删除这个存档吗？')) {
+                window.DataManager?.deleteGameSave(currentWorldId, saveId);
+                showNotification('存档已删除', 'success');
+                showSaveManager(); // 刷新存档列表
+            }
+        }
+
+        function exportSave(saveId) {
+            const saves = window.DataManager?.getGameSaves(currentWorldId) || [];
+            const save = saves.find(s => s.id === saveId);
+            if (save) {
+                const saveJson = window.DataManager?.exportGameSave(save);
+                if (saveJson) {
+                    const blob = new Blob([saveJson], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `story_save_${save.name.replace(/[^a-zA-Z0-9]/g, '_')}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    showNotification('存档导出成功', 'success');
+                }
+            }
+        }
+
+        function importSave() {
+            const fileInput = document.getElementById('importSaveFile');
+            const textInput = document.getElementById('importSaveText');
+            
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const saveJson = e.target.result;
+                        const save = window.DataManager?.importGameSave(currentWorldId, saveJson);
+                        if (save) {
+                            showNotification('存档导入成功', 'success');
+                            showSaveManager(); // 刷新存档列表
+                        } else {
+                            showNotification('导入存档失败，请检查JSON格式', 'error');
+                        }
+                    } catch (error) {
+                        showNotification('读取文件失败: ' + error.message, 'error');
+                    }
+                };
+                reader.onerror = function() {
+                    showNotification('读取文件失败', 'error');
+                };
+                reader.readAsText(file);
+            } else if (textInput.value.trim()) {
+                const saveJson = textInput.value.trim();
+                const save = window.DataManager?.importGameSave(currentWorldId, saveJson);
+                if (save) {
+                    showNotification('存档导入成功', 'success');
+                    showSaveManager(); // 刷新存档列表
+                } else {
+                    showNotification('导入存档失败，请检查JSON格式', 'error');
+                }
+            } else {
+                showNotification('请选择文件或粘贴JSON内容', 'error');
+            }
+        }
+
+        function renderHistoryPage(container) {
+            if (!currentWorldId) {
+                container.innerHTML = `
+                    <h1 class="page-title">故事历史</h1>
+                    <p class="page-subtitle">请先选择一个世界</p>
+                `;
+                return;
+            }
+
+            const saves = window.DataManager?.getGameSaves(currentWorldId) || [];
+
+            container.innerHTML = `
+                <h1 class="page-title">故事历史</h1>
+                <p class="page-subtitle">${saves.length} 个存档</p>
+
+                ${saves.length === 0 ? `
+                    <div class="empty-state">
+                        <p>暂无存档</p>
+                        <button class="btn" onclick="showPage('story')" style="margin-top: 16px;">开始第一个故事</button>
+                    </div>
+                ` : `
+                    <div style="background: var(--bg-card); border-radius: 16px; padding: 24px; border: 1px solid var(--border);">
+                        <div style="position: relative; padding-left: 30px;">
+                            ${saves.map((save, i) => `
+                                <div style="position: relative; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border); cursor: pointer;" onclick="showSaveDetails('${save.id}')">
+                                    <div style="position: absolute; left: -30px; top: 0; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;">
+                                        ${i + 1}
+                                    </div>
+                                    <div style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                                        <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">${save.name}</h3>
+                                        <span style="font-size: 0.8rem; color: var(--text-muted);">${new Date(save.timestamp).toLocaleString()}</span>
+                                    </div>
+                                    <div style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 12px;">
+                                        ${save.story.summary || '暂无摘要'}
+                                    </div>
+                                    <div style="display: flex; gap: 16px; font-size: 0.85rem; color: var(--text-muted);">
+                                        <span>📖 ${save.story.scenes?.length || 0} 个场景</span>
+                                        <span>🎭 ${save.story.mainCharacters?.join('、') || '未知'}</span>
+                                    </div>
+                                    <div style="margin-top: 12px; display: flex; gap: 8px;">
+                                        <button class="btn btn-secondary" onclick="event.stopPropagation(); loadSave('${save.id}')" style="padding: 6px 12px; font-size: 0.8rem;">继续故事</button>
+                                        <button class="btn btn-secondary" onclick="event.stopPropagation(); showSaveDetails('${save.id}')" style="padding: 6px 12px; font-size: 0.8rem;">查看详情</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `}
+            `;
+        }
+
+        function showSaveDetails(saveId) {
+            const save = window.DataManager?.getSaveById(currentWorldId, saveId);
+            if (!save) {
+                showNotification('存档不存在', 'error');
+                return;
+            }
+
+            const story = save.story;
+            const scenes = story.scenes || [];
+
+            let html = `
+                <div style="max-height: 400px; overflow-y: auto;">
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 12px;">${save.name}</h3>
+                        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">
+                            保存时间: ${new Date(save.timestamp).toLocaleString()}
+                        </p>
+                        ${story.summary ? `
+                            <div style="background: var(--bg-hover); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                                <h4 style="margin-bottom: 8px; font-size: 0.9rem;">故事摘要</h4>
+                                <p>${story.summary}</p>
+                            </div>
+                        ` : ''}
+                        <div style="margin-bottom: 16px;">
+                            <h4 style="margin-bottom: 8px; font-size: 0.9rem;">故事信息</h4>
+                            <div style="display: flex; gap: 16px; font-size: 0.85rem; color: var(--text-secondary);">
+                                <span>📖 ${scenes.length} 个场景</span>
+                                <span>🎭 ${story.mainCharacters?.join('、') || '未知'}</span>
+                                <span>⏰ ${new Date(story.startTime).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 style="margin-bottom: 12px; font-size: 0.9rem;">故事内容</h4>
+                        ${scenes.length > 0 ? scenes.map((scene, idx) => `
+                            <div style="background: var(--bg-hover); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+                                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">场景 ${idx + 1}</div>
+                                <div style="line-height: 1.6;">${scene.content}</div>
+                            </div>
+                        `).join('') : '<p style="color: var(--text-muted);">暂无场景内容</p>'}
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; display: flex; gap: 12px;">
+                    <button class="btn" onclick="loadSave('${saveId}')">继续故事</button>
+                    <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+                </div>
+            `;
+
+            document.getElementById('modalTitle').textContent = '存档详情';
+            document.getElementById('modalBody').innerHTML = html;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function renderAPIPage(container) {
+            const apiKey = localStorage.getItem('apiKey') || '';
+            const apiEndpoint = localStorage.getItem('apiEndpoint') || '';
+            const apiModel = localStorage.getItem('apiModel') || '';
+            const apiProvider = localStorage.getItem('apiProvider') || 'deepseek';
+
+            container.innerHTML = `
+                <h1 class="page-title">API 配置</h1>
+                <p class="page-subtitle">配置 AI 服务提供商</p>
+
+                <div class="setting-section collapsed">
+                    <h4>
+                        服务提供商
+                        <button class="toggle-btn" onclick="var p=this.parentElement.parentElement;p.classList.toggle('collapsed');this.textContent=p.classList.contains('collapsed')?'展开':'收起'">展开</button>
+                    </h4>
+                    <div class="setting-content">
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="radio" name="apiProvider" value="deepseek" ${apiProvider === 'deepseek' ? 'checked' : ''} onchange="saveAPIConfig()">
+                                DeepSeek
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="radio" name="apiProvider" value="openai" ${apiProvider === 'openai' ? 'checked' : ''} onchange="saveAPIConfig()">
+                                OpenAI
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="radio" name="apiProvider" value="anthropic" ${apiProvider === 'anthropic' ? 'checked' : ''} onchange="saveAPIConfig()">
+                                Anthropic
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-section collapsed">
+                    <h4>
+                        API 密钥
+                        <button class="toggle-btn" onclick="var p=this.parentElement.parentElement;p.classList.toggle('collapsed');this.textContent=p.classList.contains('collapsed')?'展开':'收起'">展开</button>
+                    </h4>
+                    <div class="setting-content">
+                        <div class="form-group">
+                            <label>API Key</label>
+                            <input type="password" id="apiKey" value="${apiKey}" placeholder="输入 API Key">
+                        </div>
+
+                        <div class="form-group">
+                            <label>API Endpoint (可选)</label>
+                            <input type="text" id="apiEndpoint" value="${apiEndpoint}" placeholder="自定义 endpoint">
+                        </div>
+
+                        <div class="form-group">
+                            <label>模型</label>
+                            <select id="apiModel">
+                                <option value="">默认模型</option>
+                                ${apiProvider === 'deepseek' ? `
+                                    <option value="deepseek-chat" ${apiModel === 'deepseek-chat' ? 'selected' : ''}>deepseek-chat</option>
+                                ` : apiProvider === 'openai' ? `
+                                    <option value="gpt-4" ${apiModel === 'gpt-4' ? 'selected' : ''}>GPT-4</option>
+                                    <option value="gpt-3.5-turbo" ${apiModel === 'gpt-3.5-turbo' ? 'selected' : ''}>GPT-3.5 Turbo</option>
+                                ` : `
+                                    <option value="claude-3-opus" ${apiModel === 'claude-3-opus' ? 'selected' : ''}>Claude 3 Opus</option>
+                                    <option value="claude-3-sonnet" ${apiModel === 'claude-3-sonnet' ? 'selected' : ''}>Claude 3 Sonnet</option>
+                                `}
+                            </select>
+                        </div>
+
+                        <button class="btn" onclick="testAPI()">测试连接</button>
+                        <button class="btn btn-secondary" onclick="saveAPIConfig()" style="margin-left: 12px;">保存配置</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderHentaiPage(container) {
+            if (!currentWorldId) {
+                container.innerHTML = `
+                    <h1 class="page-title">成人设置</h1>
+                    <p class="page-subtitle">请先选择一个世界</p>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <h1 class="page-title">成人内容设置</h1>
+                <p class="page-subtitle">配置色情/暧昧内容的生成规则</p>
+
+                <div id="hentaiSettingsContent">
+                    <div class="loading">加载中...</div>
+                </div>
+            `;
+
+            // 确保HentaiSystemV3加载完成
+            function loadHentaiSettings() {
+                if (window.HentaiSystemV3 && typeof window.HentaiSystemV3.renderEnhancedSettingsPanel === 'function') {
+                    const content = window.HentaiSystemV3.renderEnhancedSettingsPanel(currentWorldId);
+                    document.getElementById('hentaiSettingsContent').innerHTML = content || '加载失败';
+                } else {
+                    // 重试
+                    setTimeout(loadHentaiSettings, 100);
+                }
+            }
+            loadHentaiSettings();
+        }
+
+        function loadWorldData(worldId) {
+            const characters = window.DataManager?.getCharacters(worldId) || [];
+            const charList = document.getElementById('characterList');
+
+            if (characters.length === 0) {
+                charList.innerHTML = '<div class="empty-state">暂无角色</div>';
+            } else {
+                charList.innerHTML = characters.slice(0, 5).map(c => `
+                    <div class="character-mini" onclick="CharacterPanelManager?.openPanel('${worldId}', '${c.id}')">
+                        <div class="avatar">${c.avatar || '👤'}</div>
+                        <div class="info">
+                            <div class="name">${c.name}</div>
+                            <div class="status">${c.isMain ? '主角' : '配角'}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            const tasks = [...(window.TaskManager?.suggestTasks(worldId) || []), ...(window.TaskManager?.generateSmartSuggestions?.(worldId) || [])];
+            const taskList = document.getElementById('taskList');
+
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<div class="empty-state">暂无任务</div>';
+            } else {
+                taskList.innerHTML = tasks.slice(0, 5).map(t => `
+                    <div class="task-item ${t.icon ? 'with-icon' : ''}">
+                        ${t.icon ? `<span class="task-icon">${t.icon}</span>` : ''}
+                        <div>
+                            <div class="title">${t.title}</div>
+                            <div class="desc">${t.description}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            const goalPanel = document.getElementById('goalPanelContent');
+            if (goalPanel && window.GoalManager) {
+                goalPanel.innerHTML = window.GoalManager.renderGoalPanel(worldId);
+            }
+        }
+
+        function showCreateWorldModal() {
+            document.getElementById('modalTitle').textContent = '创建新世界';
+            document.getElementById('modalBody').innerHTML = `
+                <div class="form-group">
+                    <label>世界名称</label>
+                    <input type="text" id="worldName" placeholder="输入世界名称">
+                </div>
+
+                <div class="form-group">
+                    <label>世界类型</label>
+                    <select id="worldType">
+                        <option value="自定义">自定义</option>
+                        <option value="都市">都市</option>
+                        <option value="奇幻">奇幻</option>
+                        <option value="科幻">科幻</option>
+                        <option value="玄幻">玄幻</option>
+                        <option value="校园">校园</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>世界观/背景</label>
+                    <textarea id="worldBackground" placeholder="描述这个世界的设定和背景..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>故事基调</label>
+                        <select id="worldTone">
+                            <option value="中性">中性</option>
+                            <option value="轻松">轻松</option>
+                            <option value="严肃">严肃</option>
+                            <option value="黑暗">黑暗</option>
+                            <option value="暧昧">暧昧</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>成人内容程度</label>
+                        <div class="slider-group">
+                            <input type="range" min="0" max="100" value="50" id="worldAdultContent">
+                            <span class="value" id="adultContentValue">50%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>起始时间</label>
+                    <input type="datetime-local" id="worldTimeStart">
+                </div>
+
+                <button class="btn" onclick="createWorld()" style="width: 100%; margin-top: 16px;">创建世界</button>
+            `;
+
+            document.getElementById('adultContentValue').textContent = document.getElementById('worldAdultContent').value + '%';
+            document.getElementById('worldAdultContent').oninput = function() {
+                document.getElementById('adultContentValue').textContent = this.value + '%';
+            };
+
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('worldTimeStart').value = now.toISOString().slice(0, 16);
+
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function createWorld() {
+            const name = document.getElementById('worldName').value.trim();
+            if (!name) {
+                showNotification('请输入世界名称', 'error');
+                return;
+            }
+
+            const world = window.WorldManager.create({
+                name: name,
+                type: document.getElementById('worldType').value,
+                background: document.getElementById('worldBackground').value,
+                tone: document.getElementById('worldTone').value,
+                adultContent: parseInt(document.getElementById('worldAdultContent').value),
+                timeStart: document.getElementById('worldTimeStart').value
+            });
+
+            currentWorldId = world.id;
+            localStorage.setItem('currentWorldId', world.id);
+
+            closeModal();
+            showNotification('世界创建成功！', 'success');
+            renderPage('worlds');
+        }
+
+        function editWorld(worldId) {
+            const world = window.WorldManager.get(worldId);
+            if (!world) return;
+
+            currentWorldId = worldId;
+            localStorage.setItem('currentWorldId', worldId);
+            renderPage('worlds');
+            showNotification('已切换到世界: ' + world.name, 'success');
+        }
+
+        function deleteWorld(worldId) {
+            if (!confirm('确定要删除这个世界吗？此操作不可恢复！')) return;
+
+            window.WorldManager.delete(worldId);
+            if (currentWorldId === worldId) {
+                currentWorldId = null;
+                localStorage.removeItem('currentWorldId');
+            }
+            renderPage('worlds');
+            showNotification('世界已删除', 'success');
+        }
+
+        function enterWorld(worldId) {
+            currentWorldId = worldId;
+            localStorage.setItem('currentWorldId', worldId);
+            showPage('story');
+            loadWorldData(worldId);
+        }
+
+        function startNewStory() {
+            if (!currentWorldId) {
+                showNotification('请先选择一个世界', 'error');
+                return;
+            }
+
+            try {
+                const mode = document.querySelector('input[name="storyMode"]:checked')?.value || '互动';
+                window.WorldManager.update(currentWorldId, { settings: { mode } });
+
+                showStoryLoading('正在开始新故事...');
+                window.DataManager.init(currentWorldId);
+                window.StoryEngine.init(currentWorldId);
+
+                window.StoryEngine.startNew({ mainCharacters: [] }).then(story => {
+                    console.log('故事创建成功:', story);
+                    hideStoryLoading();
+                    openStoryReader();
+                }).catch(err => {
+                    console.error('开始故事失败:', err);
+                    hideStoryLoading();
+                    showNotification('开始失败: ' + err.message, 'error');
+                });
+            } catch (err) {
+                console.error('开始故事失败:', err);
+                hideStoryLoading();
+                showNotification('开始失败: ' + err.message, 'error');
+            }
+        }
+
+        function continueStory() {
+            if (!currentWorldId) {
+                showNotification('请先选择一个世界', 'error');
+                return;
+            }
+
+            try {
+                showStoryLoading('正在生成下一段故事...');
+                window.DataManager.init(currentWorldId);
+                window.StoryEngine.init(currentWorldId);
+
+                const choice = window.StoryEngine.continue('请继续故事').then(scene => {
+                    hideStoryLoading();
+                    if (scene) {
+                        showNotification('故事已更新！', 'success');
+                        openStoryReader();
+                    } else {
+                        showNotification('继续故事失败', 'error');
+                    }
+                }).catch(err => {
+                    hideStoryLoading();
+                    showNotification('继续失败: ' + err.message, 'error');
+                });
+            } catch (err) {
+                console.error('继续故事失败:', err);
+                hideStoryLoading();
+                showNotification('继续失败: ' + err.message, 'error');
+            }
+        }
+
+        function makeChoice(sceneId, choiceIndex) {
+            if (!currentWorldId) {
+                showNotification('请先选择一个世界', 'error');
+                return;
+            }
+
+            try {
+                const currentStory = window.DataManager?.getCurrentStory(currentWorldId);
+                if (!currentStory) {
+                    showNotification('没有进行中的故事', 'error');
+                    return;
+                }
+
+                const scene = currentStory.scenes.find(s => s.id == sceneId);
+                if (!scene || !scene.choices || !scene.choices[choiceIndex]) {
+                    showNotification('无效的选择', 'error');
+                    return;
+                }
+
+                const choiceObj = scene.choices[choiceIndex];
+                const userChoice = typeof choiceObj === 'object' ? choiceObj.text : choiceObj;
+                showNotification('你选择了: ' + userChoice, 'success');
+
+                window.DataManager.init(currentWorldId);
+                window.StoryEngine.init(currentWorldId);
+
+                window.StoryEngine.continue(userChoice).then(newScene => {
+                    if (newScene) {
+                        showNotification('故事已更新！', 'success');
+                        openStoryReader();
+                    } else {
+                        showNotification('故事更新失败', 'error');
+                    }
+                }).catch(err => {
+                    showNotification('选择失败: ' + err.message, 'error');
+                });
+            } catch (err) {
+                console.error('选择失败:', err);
+                showNotification('选择失败: ' + err.message, 'error');
+            }
+        }
+
+        function endStory() {
+            if (!confirm('确定要结束当前故事吗？')) return;
+
+            window.StoryEngine.end().then(result => {
+                showNotification('故事已保存到历史', 'success');
+                closeStoryReader();
+            });
+        }
+
+        function saveAPIConfig() {
+            const provider = document.querySelector('input[name="apiProvider"]:checked')?.value || 'deepseek';
+            const apiKey = document.getElementById('apiKey')?.value || localStorage.getItem('apiKey') || '';
+            const apiEndpoint = document.getElementById('apiEndpoint')?.value || '';
+            const apiModel = document.getElementById('apiModel')?.value || '';
+
+            localStorage.setItem('apiProvider', provider);
+            localStorage.setItem('apiKey', apiKey);
+            localStorage.setItem('apiEndpoint', apiEndpoint);
+            localStorage.setItem('apiModel', apiModel);
+
+            showNotification('API 配置已保存', 'success');
+        }
+
+        function testAPI() {
+            saveAPIConfig();
+            showNotification('测试连接中...', 'success');
+
+            if (window.miniAI) {
+                window.miniAI.reloadConfig();
+                window.miniAI.call('你好', {}).then(() => {
+                    showNotification('✓ 连接成功！API 正常工作', 'success');
+                }).catch(err => {
+                    showNotification('✗ 连接失败: ' + err.message, 'error');
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            
+            const currentStory = window.DataManager?.getCurrentStory(currentWorldId);
+            if (currentStory && currentStory.scenes && currentStory.scenes.length > 0) {
+                const reader = document.getElementById('storyReader');
+                if (reader) {
+                    reader.style.display = 'flex';
+                }
+            }
+        }
+
+        function openStoryReader() {
+            const reader = document.getElementById('storyReader');
+            const content = document.getElementById('storyReaderContent');
+            const footer = document.getElementById('storyReaderFooter');
+            const title = document.getElementById('storyReaderTitle');
+            
+            window.DataManager?.init(currentWorldId);
+            let currentStory = window.DataManager?.getCurrentStory(currentWorldId);
+            
+            // 如果没有进行中的故事，从历史故事继续
+            if (!currentStory || !currentStory.scenes) {
+                const stories = window.DataManager?.getStories(currentWorldId) || [];
+                if (stories.length > 0) {
+                    showStoryLoading('正在从历史故事继续...');
+                    window.StoryEngine.init(currentWorldId);
+                    window.StoryEngine.startNew({ mainCharacters: [] }).then(story => {
+                        hideStoryLoading();
+                        currentStory = story;
+                        renderStoryReader(currentStory, content, footer, title);
+                        reader.style.display = 'flex';
+                    }).catch(err => {
+                        hideStoryLoading();
+                        showNotification('继续故事失败: ' + err.message, 'error');
+                    });
+                    return;
+                } else {
+                    showNotification('没有进行中的故事', 'error');
+                    return;
+                }
+            }
+            
+            renderStoryReader(currentStory, content, footer, title);
+            reader.style.display = 'flex';
+        }
+
+        function renderStoryReader(currentStory, content, footer, title) {
+            console.log('当前故事场景:', currentStory.scenes);
+            console.log('第一个场景的选项:', currentStory.scenes[0]?.choices);
+            
+            title.textContent = currentStory.mode === '小说' ? '小说阅读' : '互动故事';
+            
+            const goals = window.GoalManager?.getGoals(currentWorldId) || [];
+            const activeGoals = goals.filter(g => g.status === 'active');
+            
+            const goalsHtml = activeGoals.length > 0 ? `
+                <div class="story-goals" style="background: var(--bg-tertiary); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px;">🎯 当前目标</div>
+                    ${activeGoals.slice(0, 3).map(g => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <span>${g.name}</span>
+                            <span style="color: ${g.progress >= g.target ? '#4ade80' : '#fbbf24'};">${g.progress || 0}/${g.target || 1}</span>
+                        </div>
+                    `).join('')}
+                    <button class="btn btn-secondary" onclick="showStoryGoals()" style="margin-top: 8px; width: 100%;">查看全部目标</button>
+                </div>
+            ` : '';
+            
+            let scenesHtml = currentStory.scenes.map((scene, sceneIdx) => `
+                <div class="story-reader-scene">
+                    <div class="story-reader-text">${scene.content}</div>
+                    ${scene.choices && scene.choices.length > 0 ? `
+                        <div class="story-reader-choices">
+                            ${scene.choices.map((choice, idx) => `
+                                <button class="btn btn-secondary" onclick="makeChoiceInReader('${scene.id}', ${idx})">${typeof choice === 'object' ? choice.text : choice}</button>
+                            `).join('')}
+                            <div class="custom-choice-input" style="margin-top: 12px; display: flex; gap: 8px;">
+                                <input type="text" id="customChoice_${scene.id}" placeholder="自定义选项..." style="flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary);">
+                                <button class="btn" onclick="submitCustomChoice('${scene.id}')">确定</button>
+                            </div>
+                        </div>
+                    ` : `
+                        <div class="custom-choice-input" style="margin-top: 12px; display: flex; gap: 8px;">
+                            <input type="text" id="customChoice_${scene.id}" placeholder="输入你想做的事情..." style="flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary);">
+                            <button class="btn" onclick="submitCustomChoice('${scene.id}')">确定</button>
+                        </div>
+                    `}
+                </div>
+            `).join('');
+            
+            content.innerHTML = goalsHtml + scenesHtml;
+            
+            footer.innerHTML = `
+                <button class="btn" onclick="continueStoryInReader()">继续故事</button>
+                <button class="btn btn-secondary" onclick="showIntimateInReader()">💕 亲密互动</button>
+                <button class="btn btn-secondary" onclick="endStory()">结束故事</button>
+            `;
+        }
+
+        function showStoryCharacters() {
+            if (!currentWorldId) return;
+            
+            window.DataManager?.init(currentWorldId);
+            const mainChars = window.DataManager?.getMainCharacters(currentWorldId) || [];
+            
+            if (mainChars.length === 0) {
+                showNotification('暂无角色', 'error');
+                return;
+            }
+            
+            const html = mainChars.map(char => {
+                const isMale = char.baseProfile?.gender === '男性';
+                return `
+                <div class="character-mini" onclick="CharacterPanelManager?.openPanel('${currentWorldId}', '${char.id}')" style="cursor: pointer; padding: 12px; margin-bottom: 12px; background: var(--bg-tertiary); border-radius: 8px;">
+                    <div class="avatar" style="font-size: 2rem;">${char.avatar || '👤'}</div>
+                    <div class="info" style="flex: 1;">
+                        <div class="name" style="font-weight: bold;">${char.name} ${char.baseProfile?.age ? char.baseProfile.age + '岁' : ''}</div>
+                        <div class="status" style="font-size: 0.85rem; color: var(--text-secondary);">${char.baseProfile?.personality || '未设定'}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="color: #4ade80;">❤️ ${char.stats?.health || 100}</div>
+                        <div style="color: #60a5fa;">⚡ ${char.stats?.energy || 100}</div>
+                        <div style="color: #f472b6;">💕 ${char.stats?.affection || 50}</div>
+                        <div style="color: #fb923c;">🔥 ${char.stats?.arousal || 0}</div>
+                        ${isMale ? `<div style="color: #a855f7;">💜 ${char.stats?.erection || 0}</div>` : ''}
+                    </div>
+                </div>
+            `}).join('');
+            
+            document.getElementById('modalTitle').textContent = '角色状态';
+            document.getElementById('modalBody').innerHTML = html;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function showStoryGoals() {
+            if (!currentWorldId) return;
+            
+            window.DataManager?.init(currentWorldId);
+            const goals = window.GoalManager?.getGoals(currentWorldId) || [];
+            
+            if (goals.length === 0) {
+                showNotification('暂无目标', 'error');
+                return;
+            }
+            
+            const html = goals.map(goal => `
+                <div style="padding: 12px; margin-bottom: 12px; background: var(--bg-tertiary); border-radius: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-weight: bold;">${goal.name}</span>
+                        <span style="color: ${goal.status === 'completed' ? '#4ade80' : '#fbbf24'};">${goal.status === 'completed' ? '已完成' : '进行中'}</span>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px;">${goal.description || ''}</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="flex: 1; background: var(--bg-primary); height: 8px; border-radius: 4px; margin-right: 12px; overflow: hidden;">
+                            <div style="width: ${((goal.progress || 0) / (goal.target || 1)) * 100}%; background: ${goal.status === 'completed' ? '#4ade80' : '#3b82f6'}; height: 100%;"></div>
+                        </div>
+                        <span style="font-size: 0.85rem;">${goal.progress || 0}/${goal.target || 1}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('modalTitle').textContent = '🎯 目标追踪';
+            document.getElementById('modalBody').innerHTML = html;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeStoryReader() {
+            document.getElementById('storyReader').style.display = 'none';
+            showPage('story');
+        }
+
+        function showIntimateInReader() {
+            const reader = document.getElementById('storyReader');
+            if (reader && reader.style.display !== 'none') {
+                reader.style.display = 'none';
+            }
+
+            if (!currentWorldId) {
+                showNotification('请先选择一个世界', 'error');
+                return;
+            }
+
+            const mainChars = window.DataManager?.getMainCharacters(currentWorldId) || [];
+            if (mainChars.length === 0) {
+                showNotification('请先添加角色', 'error');
+                return;
+            }
+
+            window.currentHentaiCharacters = mainChars;
+            // 初始化HentaiSystemV3
+            if (window.HentaiSystemV3) {
+                window.HentaiSystemV3.init(currentWorldId);
+            }
+            const html = window.HentaiSystemV3?.renderInteractionPanel(currentWorldId, mainChars);
+            
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            const modalOverlay = document.getElementById('modalOverlay');
+            
+            if (!modalTitle || !modalBody || !modalOverlay) {
+                showNotification('界面加载中，请稍后重试', 'error');
+                return;
+            }
+            
+            modalTitle.textContent = '💕 亲密互动';
+            modalBody.innerHTML = html;
+            modalOverlay.classList.add('active');
+        }
+
+        window.HentaiSceneCallback = function(content) {
+            closeModal();
+            
+            window.DataManager?.init(currentWorldId);
+            const currentStory = window.DataManager?.getCurrentStory(currentWorldId);
+            
+            if (currentStory) {
+                const newScene = {
+                    id: generateId(),
+                    storyId: currentStory.id,
+                    time: new Date().toISOString(),
+                    content: content,
+                    choices: [],
+                    characters: window.currentHentaiCharacters?.map(c => c.id) || [],
+                    location: '亲密互动中',
+                    mood: '亲密'
+                };
+                
+                currentStory.scenes.push(newScene);
+                window.DataManager.saveCurrentStory(currentWorldId, currentStory);
+                
+                window.StoryEngine?.init(currentWorldId);
+                window.StoryEngine?._updateCharacterStatsFromStory?.(content);
+                
+                openStoryReader();
+            } else {
+                const storyContainer = document.getElementById('storyReaderContent');
+                if (storyContainer) {
+                    storyContainer.innerHTML += `<div class="story-reader-scene"><div class="story-reader-text">${content}</div></div>`;
+                    storyContainer.scrollTop = storyContainer.scrollHeight;
+                }
+            }
+            showNotification('互动场景已添加到故事中', 'success');
+        };
+
+        function continueStoryInReader() {
+            if (!currentWorldId) return;
+
+            showStoryLoading('正在生成下一段故事...');
+            window.DataManager.init(currentWorldId);
+            window.StoryEngine.init(currentWorldId);
+
+            window.StoryEngine.continue('请继续故事').then(scene => {
+                hideStoryLoading();
+                if (scene) {
+                    showNotification('故事已更新！', 'success');
+                    openStoryReader();
+                } else {
+                    showNotification('继续故事失败', 'error');
+                }
+            }).catch(err => {
+                hideStoryLoading();
+                showNotification('继续失败: ' + err.message, 'error');
+            });
+        }
+
+        function makeChoiceInReader(sceneId, choiceIndex) {
+            if (!currentWorldId) return;
+
+            const currentStory = window.DataManager?.getCurrentStory(currentWorldId);
+            if (!currentStory) return;
+
+            const scene = currentStory.scenes.find(s => s.id == sceneId);
+            if (!scene || !scene.choices || !scene.choices[choiceIndex]) return;
+
+            const choiceObj = scene.choices[choiceIndex];
+            const userChoice = typeof choiceObj === 'object' ? choiceObj.text : choiceObj;
+
+            showStoryLoading('正在生成...');
+            window.DataManager.init(currentWorldId);
+            window.StoryEngine.init(currentWorldId);
+
+            window.StoryEngine.continue(userChoice).then(newScene => {
+                hideStoryLoading();
+                if (newScene) {
+                    showNotification('故事已更新！', 'success');
+                    openStoryReader();
+                }
+            }).catch(err => {
+                hideStoryLoading();
+                showNotification('选择失败: ' + err.message, 'error');
+            });
+        }
+
+        function submitCustomChoice(sceneId) {
+            const input = document.getElementById('customChoice_' + sceneId);
+            if (!input) return;
+            
+            const userChoice = input.value.trim();
+            if (!userChoice) {
+                showNotification('请输入选项内容', 'error');
+                return;
+            }
+            
+            showStoryLoading('正在生成...');
+            window.DataManager.init(currentWorldId);
+            window.StoryEngine.init(currentWorldId);
+
+            window.StoryEngine.continue(userChoice).then(newScene => {
+                hideStoryLoading();
+                if (newScene) {
+                    showNotification('故事已更新！', 'success');
+                    openStoryReader();
+                }
+            }).catch(err => {
+                hideStoryLoading();
+                showNotification('选择失败: ' + err.message, 'error');
+            });
+        }
+
+        function showAddCharacterModal() {
+            if (!currentWorldId) {
+                showNotification('请先选择一个世界', 'error');
+                return;
+            }
+            
+            document.getElementById('modalTitle').textContent = '添加主角';
+            document.getElementById('modalBody').innerHTML = `
+                <div class="form-group">
+                    <label>角色名称</label>
+                    <input type="text" id="charName" placeholder="输入角色名称">
+                </div>
+                
+                <div class="form-group">
+                    <label>年龄</label>
+                    <input type="number" id="charAge" placeholder="18" value="18">
+                </div>
+                
+                <div class="form-group">
+                    <label>性别</label>
+                    <select id="charGender" style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary);">
+                        <option value="女性">女性</option>
+                        <option value="男性">男性</option>
+                        <option value="中性">中性</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>外观描述</label>
+                    <textarea id="charAppearance" rows="3" placeholder="描述角色的外貌特征"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>性格特点</label>
+                    <input type="text" id="charPersonality" placeholder="如：温柔、独立、活泼">
+                </div>
+                
+                <div class="form-group">
+                    <label>背景故事</label>
+                    <textarea id="charBackground" rows="4" placeholder="描述角色的背景故事"></textarea>
+                </div>
+                
+                <button class="btn" onclick="addCharacter()" style="width: 100%;">确认添加</button>
+            `;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function addCharacter() {
+            const name = document.getElementById('charName').value.trim();
+            const age = parseInt(document.getElementById('charAge').value) || 18;
+            const gender = document.getElementById('charGender').value;
+            const appearance = document.getElementById('charAppearance').value.trim();
+            const personality = document.getElementById('charPersonality').value.trim();
+            const background = document.getElementById('charBackground').value.trim();
+            
+            if (!name) {
+                showNotification('请输入角色名称', 'error');
+                return;
+            }
+            
+            const character = {
+                id: generateId(),
+                name: name,
+                isMain: true,
+                baseProfile: {
+                    age: age,
+                    gender: gender,
+                    appearance: appearance,
+                    personality: personality || '未知',
+                    background: background
+                },
+                stats: {
+                    health: 100,
+                    energy: 100,
+                    arousal: 0,
+                    affection: 50
+                },
+                status: '正常'
+            };
+            
+            window.DataManager?.addCharacter(currentWorldId, character);
+            closeModal();
+            showNotification('角色添加成功', 'success');
+            renderPage('story');
+        }
+
+        function deleteCharacter(characterId) {
+            if (!confirm('确定要删除这个角色吗？')) return;
+            
+            window.DataManager?.deleteCharacter(currentWorldId, characterId);
+            showNotification('角色已删除', 'success');
+            renderPage('story');
+        }
+
+        function importCharacter() {
+            if (!currentWorldId) {
+                showNotification('请先选择一个世界', 'error');
+                return;
+            }
+            
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        let characters = [];
+                        
+                        if (Array.isArray(data)) {
+                            characters = data;
+                        } else if (data.name) {
+                            characters = [data];
+                        } else {
+                            throw new Error('无效的角色数据格式');
+                        }
+                        
+                        let importedCount = 0;
+                        characters.forEach(character => {
+                            if (!character.name) {
+                                return;
+                            }
+                            
+                            character.id = generateId();
+                            character.isMain = true;
+                            character.worldId = currentWorldId;
+                            
+                            if (!character.stats) {
+                                character.stats = {
+                                    health: 100,
+                                    energy: 100,
+                                    arousal: 0,
+                                    affection: 50
+                                };
+                            }
+                            
+                            window.DataManager?.addCharacter(currentWorldId, character);
+                            importedCount++;
+                        });
+                        
+                        if (importedCount > 0) {
+                            showNotification(`成功导入 ${importedCount} 个角色`, 'success');
+                            renderPage('story');
+                        } else {
+                            throw new Error('角色数据缺少名称');
+                        }
+                    } catch (err) {
+                        showNotification('导入失败: ' + err.message, 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        function exportAllCharacters() {
+            if (!currentWorldId) {
+                showNotification('请先选择一个世界', 'error');
+                return;
+            }
+            
+            const characters = window.DataManager?.getMainCharacters(currentWorldId) || [];
+            
+            if (characters.length === 0) {
+                showNotification('没有角色可导出', 'error');
+                return;
+            }
+            
+            const exportData = JSON.stringify(characters, null, 2);
+            const blob = new Blob([exportData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'characters_' + new Date().toISOString().slice(0, 10) + '.json';
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            showNotification('角色导出成功', 'success');
+        }
+
+        function showNotification(message, type = 'info') {
+            const notif = document.getElementById('notification');
+            notif.textContent = message;
+            notif.className = 'notification active ' + type;
+            setTimeout(() => {
+                notif.classList.remove('active');
+            }, 3000);
+        }
+
+        function showStoryLoading(text = '正在生成故事...') {
+            document.getElementById('storyLoadingText').textContent = text;
+            document.getElementById('storyLoadingOverlay').style.display = 'flex';
+        }
+
+        function hideStoryLoading() {
+            document.getElementById('storyLoadingOverlay').style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>

@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>故事进行中 - 故事生成器 4.0</title>
+    <style>
+        :root {
+            --bg-primary: #f5f5f7;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f0f0f5;
+            --bg-card: #ffffff;
+            --text-primary: #1a1a1f;
+            --text-secondary: #5a5a6e;
+            --text-muted: #8a8a9e;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: rgba(0, 0, 0, 0.08);
+            --border-hover: rgba(0, 0, 0, 0.15);
+            --radius: 12px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 200px 1fr 200px;
+            grid-template-rows: 60px 1fr auto;
+            height: 100vh;
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .topbar {
+            grid-column: 1 / -1;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .world-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: var(--bg-tertiary);
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .time-display {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .sidebar-left {
+            background: var(--bg-secondary);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar-section { margin-bottom: 24px; }
+
+        .sidebar-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .character-card {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .character-card:hover { background: var(--bg-card); }
+        .character-card.active { border-color: var(--accent); }
+
+        .character-header { display: flex; align-items: center; gap: 10px; }
+
+        .character-avatar {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .character-name { font-size: 0.9rem; font-weight: 500; }
+        .character-role { font-size: 0.7rem; color: var(--text-muted); }
+
+        .main-content {
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .story-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            scroll-behavior: smooth;
+            min-height: 0;
+        }
+
+        .scene-block {
+            margin-bottom: 32px;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .scene-meta { display: flex; gap: 12px; margin-bottom: 16px; }
+
+        .scene-badge {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            color: var(--text-muted);
+        }
+
+        .scene-content { font-size: 1.05rem; line-height: 1.8; }
+
+        .scene-content p { margin-bottom: 12px; }
+
+        .dialogue-block {
+            margin: 16px 0;
+            padding-left: 20px;
+            border-left: 2px solid var(--accent);
+        }
+
+        .dialogue-speaker { font-size: 0.85rem; font-weight: 600; color: var(--accent); margin-bottom: 6px; }
+        .dialogue-text { font-size: 1rem; line-height: 1.7; }
+        
+        .options-display {
+            margin-top: 16px;
+            padding: 16px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 8px;
+        }
+        .options-display strong {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--accent);
+        }
+        .options-display p {
+            margin: 4px 0;
+            font-size: 0.95rem;
+        }
+        
+        .ai-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .ai-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .ai-option:hover {
+            background: var(--bg-card);
+            border-color: var(--accent);
+        }
+        .option-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .option-text {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .generating {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        .generating-spinner {
+            width: 20px; height: 20px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 12px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .interaction-area {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 12px 20px;
+        }
+
+        .choices-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .choice-btn {
+            padding: 8px 14px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            min-width: 40px;
+        }
+        .choice-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        
+        .options-summary {
+            margin-top: 16px;
+            padding: 12px;
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .option-tag {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            background: rgba(0,0,0,0.05);
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        .input-mode-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+
+        .mode-tab {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .mode-tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .custom-input-row { display: flex; gap: 12px; }
+
+        .custom-input {
+            flex: 1;
+            padding: 14px 18px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .custom-input:focus { border-color: var(--accent); }
+
+        .send-btn {
+            padding: 14px 28px;
+            background: var(--accent);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .send-btn:hover { background: var(--accent-hover); }
+
+        .sidebar-right {
+            background: var(--bg-secondary);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .explore-item {
+            padding: 10px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .explore-item:hover { background: var(--bg-card); }
+        .explore-item-name { font-size: 0.85rem; margin-bottom: 4px; }
+        .explore-item-hint { font-size: 0.75rem; color: var(--text-muted); }
+
+        .quick-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+        .quick-action {
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .quick-action:hover { background: var(--bg-card); color: var(--text-primary); }
+
+        .assistant-badge {
+            padding: 4px 10px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin: 2px;
+        }
+
+        .assistant-badge.active { color: var(--success); }
+
+        .hidden { display: none !important; }
+
+        .icon-btn {
+            width: 40px; height: 40px;
+            border: none;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .icon-btn:hover { background: var(--bg-card); color: var(--text-primary); }
+    </style>
+</head>
+<body>
+    <a href="../../index.html" style="position:fixed;top:80px;left:20px;padding:8px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#9898a8;text-decoration:none;z-index:100;">← 返回</a>
+    <div class="app-container">
+        <header class="topbar">
+            <div class="world-badge">
+                <span id="worldName">加载中...</span>
+            </div>
+            <div class="time-display" id="timeDisplay" onclick="editTime()">--:--</div>
+            <div style="display: flex; gap: 8px;">
+                <button class="icon-btn" onclick="showSettings()">⚙️</button>
+                <button class="icon-btn" onclick="endStory()">⏹️</button>
+            </div>
+        </header>
+
+        <aside class="sidebar-left">
+            <div class="sidebar-section">
+                <div class="sidebar-title">角色</div>
+                <div id="characterList"></div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">当前目标</div>
+                <div id="goalList">
+                    <div class="character-card">探索城市</div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="story-container" id="storyContainer"></div>
+            <div class="interaction-area">
+                <div class="input-mode-tabs">
+                    <button class="mode-tab active" onclick="switchMode('choice')">选择</button>
+                    <button class="mode-tab" onclick="switchMode('roleplay')">扮演</button>
+                    <button class="mode-tab" onclick="switchMode('free')">自由</button>
+                    <button class="mode-tab" onclick="switchMode('ask')">提问</button>
+                </div>
+                <div id="choiceMode">
+                    <div class="choices-container" id="choicesContainer"></div>
+                </div>
+                <div id="roleplayMode" class="hidden">
+                    <div style="margin-bottom: 12px;">
+                        <select class="custom-input" id="roleplayChar"><option value="">选择角色</option></select>
+                    </div>
+                    <div class="custom-input-row">
+                        <input type="text" class="custom-input" id="roleplayInput" placeholder="输入角色台词...">
+                        <button class="send-btn" onclick="sendRoleplay()">发送</button>
+                    </div>
+                </div>
+                <div id="freeMode" class="hidden">
+                    <div class="custom-input-row">
+                        <input type="text" class="custom-input" id="freeInput" placeholder="输入你的选择...">
+                        <button class="send-btn" onclick="sendFree()">发送</button>
+                    </div>
+                </div>
+                <div id="askMode" class="hidden">
+                    <div style="margin-bottom: 12px;">
+                        <select class="custom-input" id="askType">
+                            <option value="clarify">确认细节</option>
+                            <option value="character">角色状态</option>
+                            <option value="world">世界观</option>
+                            <option value="suggest">建议</option>
+                        </select>
+                    </div>
+                    <div class="custom-input-row">
+                        <input type="text" class="custom-input" id="askInput" placeholder="输入问题...">
+                        <button class="send-btn" onclick="sendAsk()">提问</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="sidebar-right">
+            <div class="sidebar-section">
+                <div class="sidebar-title">可探索</div>
+                <div id="exploreList">
+                    <div class="explore-item" onclick="explore('酒吧')">
+                        <div class="explore-item-name">📍 酒吧</div>
+                        <div class="explore-item-hint">打探情报</div>
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">快捷操作</div>
+                <div class="quick-actions">
+                    <div class="quick-action" onclick="showPanel('character')">👤 角色</div>
+                    <div class="quick-action" onclick="showPanel('world')">🌍 世界</div>
+                    <div class="quick-action" onclick="showPanel('overview')">📖 概览</div>
+                    <div class="quick-action" onclick="showPanel('feedback')">💬 反馈</div>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">小助手</div>
+                <div id="assistantList">
+                    <span class="assistant-badge active">故事</span>
+                    <span class="assistant-badge">人设</span>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="../../js/engine.js"></script>
+    <script src="../../js/mini-ai.js"></script>
+    <script src="../../js/plugins/hentai-plugin.js"></script>
+    <script src="../../js/plugins/hentai-v2-plugin.js"></script>
+    <script src="../../js/plugins/hentai-v3-plugin.js"></script>
+    <script>
+        let storyEngine = null;
+        let currentMode = 'choice';
+        let isGenerating = false;
+        let currentChoices = [];
+
+        document.addEventListener('DOMContentLoaded', init);
+
+        async function init() {
+            console.log('init开始');
+            const worldId = localStorage.getItem('currentWorldId');
+            if (!worldId) { window.location.href = '../../index.html'; return; }
+
+            const world = window.DataManager.getWorld(worldId);
+            if (!world) { window.location.href = '../../index.html'; return; }
+
+            document.getElementById('worldName').textContent = world.name;
+            updateTimeDisplay();
+            loadCharacters();
+            
+            storyEngine = new StoryEngine(worldId);
+            const current = window.DataManager.getCurrentStory(worldId);
+            
+            if (current && current.status === 'in_progress') {
+                storyEngine.currentStory = current;
+                storyEngine.currentSceneIndex = current.scenes.length - 1;
+                renderStory();
+            } else {
+                await startNewStory();
+            }
+        }
+
+        function loadCharacters() {
+            const worldId = localStorage.getItem('currentWorldId');
+            const chars = window.DataManager.getCharacters(worldId);
+            
+            document.getElementById('characterList').innerHTML = chars.map(c => `
+                <div class="character-card ${c.isMain ? 'active' : ''}" data-id="${c.id}">
+                    <div class="character-header">
+                        <div class="character-avatar">${c.name.charAt(0)}</div>
+                        <div>
+                            <div class="character-name">${c.name}</div>
+                            <div class="character-role">${c.isMain ? '主角' : '配角'}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('roleplayChar').innerHTML = '<option value="">选择角色</option>' + 
+                chars.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        }
+
+        async function startNewStory() {
+            const worldId = localStorage.getItem('currentWorldId');
+            const mainChars = window.DataManager.getMainCharacters(worldId);
+
+            await storyEngine.startNew({
+                title: '新故事',
+                mainCharacters: mainChars.map(c => c.id)
+            });
+
+            await generateScene();
+        }
+
+        function renderStory() {
+            const container = document.getElementById('storyContainer');
+            const story = storyEngine.currentStory;
+            if (!story || !story.scenes) return;
+
+            container.innerHTML = story.scenes.map((scene, i) => `
+                <div class="scene-block">
+                    <div class="scene-meta">
+                        <span class="scene-badge">场景 ${i + 1}</span>
+                        <span class="scene-badge">${scene.mood || '中性'}</span>
+                    </div>
+                    <div class="scene-content">${formatContent(scene.content)}</div>
+                </div>
+            `).join('');
+
+            container.scrollTop = container.scrollHeight;
+
+            const last = story.scenes[story.scenes.length - 1];
+            if (last && last.choices) {
+                currentChoices = last.choices;
+                renderChoices(last.choices);
+            }
+        }
+
+        function formatContent(content) {
+            if (!content) return '';
+            let html = '';
+            let optionsLines = [];
+            
+            content.split('\n').forEach(line => {
+                line = line.trim();
+                if (!line) return;
+                
+                if (line.includes('【选项】') || line.includes('【选择】')) {
+                    const optText = line.replace(/【选项】/, '').replace(/【选择】/, '').trim();
+                    if (optText) optionsLines.push(optText);
+                    return;
+                }
+                
+                if (line.includes('【时间】') || line.includes('【场景】') || line.includes('【氛围】')) {
+                    return;
+                }
+                
+                const m = line.match(/^([^：:]+)[：:](.+)/);
+                if (m) {
+                    html += `<div class="dialogue-block"><div class="dialogue-speaker">${m[1]}</div><div class="dialogue-text">${m[2]}</div></div>`;
+                } else if (!line.startsWith('【')) {
+                    html += `<p>${line}</p>`;
+                }
+            });
+            
+            if (optionsLines.length > 0) {
+                html += '<div class="options-summary">';
+                html += optionsLines.map((opt, i) => `<span class="option-tag">${i+1}. ${opt}</span>`).join('');
+                html += '</div>';
+            }
+            
+            return html;
+        }
+
+        function renderChoices(choices) {
+            const container = document.getElementById('choicesContainer');
+            if (!choices || choices.length === 0) {
+                container.innerHTML = `
+                    <input type="text" class="custom-input" id="freeInput" placeholder="输入你的选择..." style="flex:1;">
+                    <button class="send-btn" onclick="sendFree()">发送</button>
+                `;
+                return;
+            }
+            
+            container.innerHTML = choices.map((c, i) => 
+                `<button class="choice-btn" onclick="selectChoice(${i})">${i+1}</button>`
+            ).join('') + `
+                <input type="text" class="custom-input" id="freeInput" placeholder="输入选项编号或自定义..." style="flex:1;">
+                <button class="send-btn" onclick="sendFree()">发送</button>
+            `;
+        }
+
+        async function generateScene(choice = null) {
+            if (isGenerating) return;
+            isGenerating = true;
+
+            const container = document.getElementById('storyContainer');
+            container.innerHTML += '<div class="generating"><div class="generating-spinner"></div>AI创作中...</div>';
+            container.scrollTop = container.scrollHeight;
+
+            try {
+                const scene = await storyEngine.continue(choice);
+                renderStory();
+            } catch (e) {
+                console.error(e);
+                alert('生成失败: ' + e.message);
+            } finally {
+                isGenerating = false;
+            }
+        }
+
+        function selectChoice(i) { if (currentChoices[i]) generateScene(currentChoices[i].text); }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.textContent.includes({'choice':'选择','roleplay':'扮演','free':'自由','ask':'提问'}[mode])));
+            ['choiceMode','roleplayMode','freeMode','askMode'].forEach(m => document.getElementById(m).classList.toggle('hidden', m !== mode + 'Mode'));
+        }
+
+        function sendFree() { const v = document.getElementById('freeInput').value.trim(); if (v) { generateScene(v); document.getElementById('freeInput').value = ''; } }
+        function sendRoleplay() { const c = document.getElementById('roleplayChar').value, v = document.getElementById('roleplayInput').value.trim(); if (c && v) { const ch = window.DataManager.getCharacter(storyEngine.worldId, c); generateScene(`【${ch.name}】${v}`); document.getElementById('roleplayInput').value = ''; } }
+        
+        async function sendAsk() {
+            const q = document.getElementById('askInput').value.trim();
+            if (!q) return;
+            
+            const container = document.getElementById('storyContainer');
+            container.innerHTML += `<div class="dialogue-block"><div class="dialogue-speaker">❓ 你</div><div class="dialogue-text">${q}</div></div>`;
+            container.scrollTop = container.scrollHeight;
+
+            try {
+                const ctx = storyEngine.buildContext();
+                const ans = await window.miniAI.call(`你是AI助手。背景：\n${ctx}\n\n问题：${q}`, { temperature: 0.7, maxTokens: 300 });
+                container.innerHTML += `<div class="dialogue-block"><div class="dialogue-speaker">💡 回答</div><div class="dialogue-text">${ans}</div></div>`;
+                container.scrollTop = container.scrollHeight;
+            } catch (e) { console.error(e); }
+            
+            document.getElementById('askInput').value = '';
+        }
+
+        function explore(name) { generateScene(`前往${name}`); }
+
+        function updateTimeDisplay() {
+            const worldId = localStorage.getItem('currentWorldId');
+            document.getElementById('timeDisplay').textContent = window.TimeManager.formatTime(worldId);
+        }
+
+        function editTime() {
+            const worldId = localStorage.getItem('currentWorldId');
+            const t = window.TimeManager.getTime(worldId);
+            const y = prompt('年份:', t.year), m = prompt('月份:', t.month), d = prompt('日期:', t.day), h = prompt('小时:', t.hour);
+            if (y && m && d && h) {
+                window.TimeManager.setTime(worldId, { year: +y, month: +m, day: +d, hour: +h, minute: 0 });
+                updateTimeDisplay();
+            }
+        }
+
+        async function endStory() {
+            if (!confirm('结束当前故事？')) return;
+            await storyEngine.end();
+            alert('故事已保存');
+            window.location.href = '../../index.html';
+        }
+
+        function showSettings() { alert('设置开发中'); }
+        function showPanel(type) { alert(type + '面板开发中'); }
+
+        document.getElementById('freeInput')?.addEventListener('keypress', e => { if (e.key === 'Enter') sendFree(); });
+        document.getElementById('roleplayInput')?.addEventListener('keypress', e => { if (e.key === 'Enter') sendRoleplay(); });
+        document.getElementById('askInput')?.addEventListener('keypress', e => { if (e.key === 'Enter') sendAsk(); });
+    </script>
+</body>
+</html>

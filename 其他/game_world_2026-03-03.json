@@ -1,0 +1,643 @@
+{
+  "world_name": "触碰的禁忌",
+  "world_setting": {
+    "time_period": "现代都市",
+    "tech_level": "科技高度发达",
+    "core_setting": "主角叶轩在一次实验室意外中获得了特殊能力——身体接触会让人强制高潮",
+    "ability_principle": "叶轩的身体会释放一种特殊的生物电场，当与他人接触时，会刺激对方的神经系统，引发强烈的性高潮",
+    "ability_limits": [
+      "接触时间越长，效果越强烈",
+      "对不同体质的人效果不同",
+      "叶轩自己也会受到一定影响，接触时间过长会导致体力消耗过大",
+      "能力可以通过意志力控制，但需要一定的训练"
+    ],
+    "social_background": [
+      "科技公司正在研究人体生物电场的应用",
+      "政府对超能力者持监控态度",
+      "社会对性的观念相对开放，但仍然存在保守势力"
+    ]
+  },
+  "story_background": {
+    "protagonist_background": "叶轩是一名材料科学与工程专业的大一学生，学习认真，对实验和研究充满热情。在一次学校实验室的意外中，叶轩接触了一种未知的晶体，导致身体发生了异变。叶轩发现自己的身体接触会让他人产生强烈的性高潮，对此感到困惑和不安。叶轩试图隐藏这个能力，但逐渐发现周围的女性开始对他产生特殊的兴趣。",
+    "main_conflicts": [
+      "叶轩需要控制自己的能力，避免伤害他人",
+      "叶轩需要探索能力的来源和原理",
+      "叶轩需要面对周围女性的示好和追求",
+      "叶轩需要躲避科技公司和政府的追踪"
+    ]
+  },
+  "special_events": [
+    {
+      "id": "event001",
+      "name": "初次觉醒",
+      "trigger_conditions": {
+        "location": "学校实验室",
+        "time": "晚上",
+        "characters": ["叶轩", "林小雨"],
+        "items": ["未知晶体"],
+        "stats": {}
+      },
+      "description": "叶轩在实验室加班，林小雨来看望他。叶轩不小心触碰到林小雨的手，林小雨突然感到强烈的性高潮，瘫软在叶轩怀里。叶轩意识到自己的能力觉醒了，感到震惊和困惑。"
+    },
+    {
+      "id": "event002",
+      "name": "图书馆的意外",
+      "trigger_conditions": {
+        "location": "学校图书馆",
+        "time": "下午",
+        "characters": ["叶轩", "苏梦琪"],
+        "items": ["书本"],
+        "stats": {
+          "苏梦琪": {
+            "affection": 60
+          }
+        }
+      },
+      "description": "叶轩和苏梦琪在图书馆一起学习，叶轩不小心触碰到苏梦琪的手。苏梦琪感到强烈的性高潮，压抑着呻吟声。叶轩感到尴尬，但苏梦琪却对这种感觉产生了好奇。"
+    },
+    {
+      "id": "event003",
+      "name": "办公室的秘密",
+      "trigger_conditions": {
+        "location": "教师办公室",
+        "time": "晚上",
+        "characters": ["叶轩", "陈雅婷"],
+        "items": ["实验报告"],
+        "stats": {
+          "陈雅婷": {
+            "affection": 70
+          },
+          "叶轩": {
+            "erection": 80
+          }
+        }
+      },
+      "description": "叶轩到办公室找陈雅婷讨论实验报告，陈雅婷不小心触碰到叶轩的手。陈雅婷感到强烈的性高潮，意识到叶轩的特殊能力。陈雅婷对叶轩产生了特殊的感情，主动靠近叶轩。"
+    },
+    {
+      "id": "event004",
+      "name": "家中的诱惑",
+      "trigger_conditions": {
+        "location": "叶轩家",
+        "time": "周末",
+        "characters": ["叶轩", "林小雨"],
+        "items": ["震动玩具"],
+        "stats": {
+          "林小雨": {
+            "affection": 80,
+            "arousal": 70,
+            "orgasm": 60,
+            "sex_experience": 50,
+            "sex_sensitivity": 70,
+            "sex_satisfaction": 60,
+            "sex_fantasy": 70
+          }
+        },
+      "description": "林小雨到叶轩家玩，故意穿着性感的衣服。林小雨主动触碰叶轩，体验到强烈的性高潮。林小雨对这种感觉上瘾，主动使用震动玩具，邀请叶轩一起参与。"
+    },
+    {
+      "id": "event005",
+      "name": "实验室的深入研究",
+      "trigger_conditions": {
+        "location": "学校实验室",
+        "time": "深夜",
+        "characters": ["叶轩", "苏梦琪"],
+        "items": ["实验设备"],
+        "stats": {
+          "苏梦琪": {
+            "affection": 80,
+            "arousal": 80,
+            "orgasm": 70,
+            "sex_experience": 60,
+            "sex_sensitivity": 80,
+            "sex_satisfaction": 70,
+            "sex_fantasy": 80
+          },
+          "叶轩": {
+            "arousal": 80,
+            "erection": 80,
+            "sex_experience": 40,
+            "sex_sensitivity": 70,
+            "sex_satisfaction": 60,
+            "sex_fantasy": 80
+          }
+        },
+      "description": "叶轩和苏梦琪在实验室研究叶轩的能力，苏梦琪主动要求进行更深入的实验。两人通过身体接触进行实验，苏梦琪体验到多次性高潮，逐渐爱上了这种感觉。"
+    },
+    {
+      "id": "event006",
+      "name": "泳池边的邂逅",
+      "trigger_conditions": {
+        "location": "学校泳池",
+        "time": "下午",
+        "characters": ["叶轩", "林小雨"],
+        "items": ["泳衣"],
+        "stats": {
+          "林小雨": {
+            "affection": 70,
+            "arousal": 60,
+            "orgasm": 50,
+            "sex_experience": 40,
+            "sex_sensitivity": 60,
+            "sex_satisfaction": 50,
+            "sex_fantasy": 60
+          },
+          "叶轩": {
+            "arousal": 70,
+            "erection": 70,
+            "sex_experience": 35,
+            "sex_sensitivity": 65,
+            "sex_satisfaction": 55,
+            "sex_fantasy": 70
+          }
+        },
+      "description": "叶轩和林小雨在泳池边玩耍，林小雨不小心滑倒，叶轩伸手去扶她。触碰到林小雨的瞬间，林小雨感到强烈的性高潮，瘫软在叶轩怀里。周围的人都投来异样的目光，两人感到尴尬但又有些兴奋。"
+    },
+    {
+      "id": "event007",
+      "name": "医务室的秘密",
+      "trigger_conditions": {
+        "location": "学校医务室",
+        "time": "上午",
+        "characters": ["叶轩", "陈雅婷"],
+        "items": ["医疗设备"],
+        "stats": {
+          "陈雅婷": {
+            "affection": 80,
+            "arousal": 70,
+            "orgasm": 65,
+            "sex_experience": 70,
+            "sex_sensitivity": 75,
+            "sex_satisfaction": 65,
+            "sex_fantasy": 75
+          },
+          "叶轩": {
+            "arousal": 75,
+            "erection": 75,
+            "sex_experience": 40,
+            "sex_sensitivity": 70,
+            "sex_satisfaction": 60,
+            "sex_fantasy": 75
+          }
+        },
+      "description": "陈雅婷身体不适，叶轩陪她到医务室。医生离开后，陈雅婷主动触碰叶轩的手，体验到强烈的性高潮。陈雅婷对这种感觉欲罢不能，主动邀请叶轩留在医务室。"
+    },
+    {
+      "id": "event008",
+      "name": "健身房的汗水",
+      "trigger_conditions": {
+        "location": "学校健身房",
+        "time": "傍晚",
+        "characters": ["叶轩", "苏梦琪"],
+        "items": ["健身器材"],
+        "stats": {
+          "苏梦琪": {
+            "affection": 75,
+            "arousal": 65,
+            "orgasm": 60,
+            "sex_experience": 55,
+            "sex_sensitivity": 70,
+            "sex_satisfaction": 60,
+            "sex_fantasy": 70
+          },
+          "叶轩": {
+            "arousal": 70,
+            "erection": 70,
+            "sex_experience": 35,
+            "sex_sensitivity": 65,
+            "sex_satisfaction": 55,
+            "sex_fantasy": 70
+          }
+        },
+      "description": "叶轩和苏梦琪在健身房锻炼，苏梦琪不小心受伤，叶轩帮她处理伤口。触碰到苏梦琪的瞬间，苏梦琪感到强烈的性高潮，呻吟声在健身房回荡。两人感到尴尬但又有些兴奋。"
+    },
+    {
+      "id": "event009",
+      "name": "电影院的黑暗",
+      "trigger_conditions": {
+        "location": "电影院",
+        "time": "晚上",
+        "characters": ["叶轩", "林小雨"],
+        "items": ["爆米花"],
+        "stats": {
+          "林小雨": {
+            "affection": 85,
+            "arousal": 75,
+            "orgasm": 70,
+            "sex_experience": 50,
+            "sex_sensitivity": 80,
+            "sex_satisfaction": 70,
+            "sex_fantasy": 80
+          },
+          "叶轩": {
+            "arousal": 80,
+            "erection": 80,
+            "sex_experience": 45,
+            "sex_sensitivity": 75,
+            "sex_satisfaction": 65,
+            "sex_fantasy": 80
+          }
+        },
+      "description": "叶轩和林小雨在电影院看电影，林小雨主动牵起叶轩的手。触碰到叶轩的瞬间，林小雨感到强烈的性高潮，压抑着呻吟声。叶轩感到兴奋，偷偷地进一步接触林小雨。"
+    },
+    {
+      "id": "event010",
+      "name": "厨房的诱惑",
+      "trigger_conditions": {
+        "location": "叶轩家厨房",
+        "time": "晚上",
+        "characters": ["叶轩", "苏梦琪"],
+        "items": ["食材"],
+        "stats": {
+          "苏梦琪": {
+            "affection": 85,
+            "arousal": 80,
+            "orgasm": 75,
+            "sex_experience": 65,
+            "sex_sensitivity": 85,
+            "sex_satisfaction": 75,
+            "sex_fantasy": 85
+          },
+          "叶轩": {
+            "arousal": 85,
+            "erection": 85,
+            "sex_experience": 50,
+            "sex_sensitivity": 80,
+            "sex_satisfaction": 70,
+            "sex_fantasy": 85
+          }
+        },
+      "description": "苏梦琪到叶轩家做饭，叶轩帮忙切菜。两人的手不小心碰到一起，苏梦琪感到强烈的性高潮，手中的菜刀掉落在地。叶轩感到兴奋，主动拥抱苏梦琪。"
+    },
+    {
+      "id": "event011",
+      "name": "教室的午后",
+      "trigger_conditions": {
+        "location": "教室",
+        "time": "下午",
+        "characters": ["叶轩", "陈雅婷"],
+        "items": ["粉笔"],
+        "stats": {
+          "陈雅婷": {
+            "affection": 85,
+            "arousal": 75,
+            "orgasm": 70,
+            "sex_experience": 75,
+            "sex_sensitivity": 80,
+            "sex_satisfaction": 70,
+            "sex_fantasy": 80
+          },
+          "叶轩": {
+            "arousal": 80,
+            "erection": 80,
+            "sex_experience": 50,
+            "sex_sensitivity": 75,
+            "sex_satisfaction": 65,
+            "sex_fantasy": 80
+          }
+        },
+      "description": "陈雅婷在教室给叶轩补课，叶轩不小心触碰到陈雅婷的手。陈雅婷感到强烈的性高潮，差点摔倒。陈雅婷对这种感觉欲罢不能，主动靠近叶轩。"
+    },
+    {
+      "id": "event012",
+      "name": "公园的约会",
+      "trigger_conditions": {
+        "location": "公园",
+        "time": "傍晚",
+        "characters": ["叶轩", "林小雨"],
+        "items": ["野餐篮"],
+        "stats": {
+          "林小雨": {
+            "affection": 90,
+            "arousal": 80,
+            "orgasm": 80,
+            "sex_experience": 60,
+            "sex_sensitivity": 85,
+            "sex_satisfaction": 75,
+            "sex_fantasy": 85
+          },
+          "叶轩": {
+            "arousal": 85,
+            "erection": 85,
+            "sex_experience": 55,
+            "sex_sensitivity": 80,
+            "sex_satisfaction": 70,
+            "sex_fantasy": 85
+          }
+        },
+      "description": "叶轩和林小雨在公园野餐，林小雨主动靠在叶轩的肩膀上。触碰到叶轩的瞬间，林小雨感到强烈的性高潮，呻吟声吸引了周围人的注意。两人感到尴尬但又有些兴奋。"
+    },
+    {
+      "id": "event013",
+      "name": "实验室的夜晚",
+      "trigger_conditions": {
+        "location": "学校实验室",
+        "time": "深夜",
+        "characters": ["叶轩", "陈雅婷"],
+        "items": ["实验器材"],
+        "stats": {
+          "陈雅婷": {
+            "affection": 90,
+            "arousal": 85,
+            "orgasm": 85,
+            "sex_experience": 80,
+            "sex_sensitivity": 90,
+            "sex_satisfaction": 80,
+            "sex_fantasy": 90
+          },
+          "叶轩": {
+            "arousal": 90,
+            "erection": 90,
+            "sex_experience": 60,
+            "sex_sensitivity": 85,
+            "sex_satisfaction": 75,
+            "sex_fantasy": 90
+          }
+        },
+      "description": "陈雅婷和叶轩在实验室加班，陈雅婷主动触碰叶轩的手。触碰到叶轩的瞬间，陈雅婷感到强烈的性高潮，瘫软在叶轩怀里。叶轩感到兴奋，主动亲吻陈雅婷。"
+    },
+    {
+      "id": "event014",
+      "name": "浴室的雾气",
+      "trigger_conditions": {
+        "location": "叶轩家浴室",
+        "time": "晚上",
+        "characters": ["叶轩", "苏梦琪"],
+        "items": ["沐浴露"],
+        "stats": {
+          "苏梦琪": {
+            "affection": 90,
+            "arousal": 90,
+            "orgasm": 85,
+            "sex_experience": 70,
+            "sex_sensitivity": 90,
+            "sex_satisfaction": 80,
+            "sex_fantasy": 90
+          },
+          "叶轩": {
+            "arousal": 90,
+            "erection": 90,
+            "sex_experience": 65,
+            "sex_sensitivity": 85,
+            "sex_satisfaction": 75,
+            "sex_fantasy": 90
+          }
+        },
+      "description": "苏梦琪在叶轩家洗澡，叶轩不小心走进浴室。两人的身体触碰到一起，苏梦琪感到强烈的性高潮，呻吟声在浴室回荡。叶轩感到兴奋，主动拥抱苏梦琪。"
+    },
+    {
+      "id": "event015",
+      "name": "床上的缠绵",
+      "trigger_conditions": {
+        "location": "叶轩家卧室",
+        "time": "深夜",
+        "characters": ["叶轩", "林小雨"],
+        "items": ["床单"],
+        "stats": {
+          "林小雨": {
+            "affection": 95,
+            "arousal": 90,
+            "orgasm": 90,
+            "sex_experience": 70,
+            "sex_sensitivity": 95,
+            "sex_satisfaction": 85,
+            "sex_fantasy": 95
+          },
+          "叶轩": {
+            "arousal": 95,
+            "erection": 95,
+            "sex_experience": 70,
+            "sex_sensitivity": 90,
+            "sex_satisfaction": 80,
+            "sex_fantasy": 95
+          }
+        },
+      "description": "林小雨在叶轩家过夜，两人躺在床上聊天。林小雨主动触碰叶轩的身体，体验到强烈的性高潮。叶轩感到兴奋，主动与林小雨发生关系。"
+    },
+    {
+      "id": "event016",
+      "name": "办公室的加班",
+      "trigger_conditions": {
+        "location": "教师办公室",
+        "time": "深夜",
+        "characters": ["叶轩", "陈雅婷"],
+        "items": ["电脑"],
+        "stats": {
+          "陈雅婷": {
+            "affection": 95,
+            "arousal": 90,
+            "orgasm": 90,
+            "sex_experience": 85,
+            "sex_sensitivity": 95,
+            "sex_satisfaction": 85,
+            "sex_fantasy": 95
+          },
+          "叶轩": {
+            "arousal": 95,
+            "erection": 95,
+            "sex_experience": 75,
+            "sex_sensitivity": 90,
+            "sex_satisfaction": 85,
+            "sex_fantasy": 95
+          }
+        },
+      "description": "陈雅婷和叶轩在办公室加班，陈雅婷主动坐在叶轩的腿上。触碰到叶轩的瞬间，陈雅婷感到强烈的性高潮，呻吟声在办公室回荡。叶轩感到兴奋，主动与陈雅婷发生关系。"
+    },
+    {
+      "id": "event017",
+      "name": "实验室的实验",
+      "trigger_conditions": {
+        "location": "学校实验室",
+        "time": "深夜",
+        "characters": ["叶轩", "苏梦琪"],
+        "items": ["实验设备"],
+        "stats": {
+          "苏梦琪": {
+            "affection": 95,
+            "arousal": 95,
+            "orgasm": 95,
+            "sex_experience": 75,
+            "sex_sensitivity": 95,
+            "sex_satisfaction": 90,
+            "sex_fantasy": 95
+          },
+          "叶轩": {
+            "arousal": 95,
+            "erection": 95,
+            "sex_experience": 80,
+            "sex_sensitivity": 95,
+            "sex_satisfaction": 85,
+            "sex_fantasy": 95
+          }
+        },
+      "description": "苏梦琪和叶轩在实验室进行深入实验，苏梦琪主动脱光衣服。两人的身体触碰到一起，苏梦琪感到强烈的性高潮。叶轩感到兴奋，主动与苏梦琪发生关系。"
+    },
+    {
+      "id": "event018",
+      "name": "泳池的夜晚",
+      "trigger_conditions": {
+        "location": "学校泳池",
+        "time": "深夜",
+        "characters": ["叶轩", "林小雨"],
+        "items": ["泳衣"],
+        "stats": {
+          "林小雨": {
+            "affection": 95,
+            "arousal": 95,
+            "orgasm": 95,
+            "sex_experience": 75,
+            "sex_sensitivity": 95,
+            "sex_satisfaction": 90,
+            "sex_fantasy": 95
+          },
+          "叶轩": {
+            "arousal": 95,
+            "erection": 95,
+            "sex_experience": 80,
+            "sex_sensitivity": 95,
+            "sex_satisfaction": 85,
+            "sex_fantasy": 95
+          }
+        },
+      "description": "叶轩和林小雨偷偷来到泳池，林小雨主动脱光衣服。两人的身体触碰到一起，林小雨感到强烈的性高潮。叶轩感到兴奋，主动与林小雨在泳池中发生关系。"
+    },
+    {
+      "id": "event019",
+      "name": "教室的夜晚",
+      "trigger_conditions": {
+        "location": "教室",
+        "time": "深夜",
+        "characters": ["叶轩", "陈雅婷"],
+        "items": ["课桌"],
+        "stats": {
+          "陈雅婷": {
+            "affection": 95,
+            "arousal": 95,
+            "orgasm": 95,
+            "sex_experience": 90,
+            "sex_sensitivity": 95,
+            "sex_satisfaction": 90,
+            "sex_fantasy": 95
+          },
+          "叶轩": {
+            "arousal": 95,
+            "erection": 95,
+            "sex_experience": 85,
+            "sex_sensitivity": 95,
+            "sex_satisfaction": 90,
+            "sex_fantasy": 95
+          }
+        },
+      "description": "陈雅婷和叶轩在教室过夜，陈雅婷主动趴在课桌上。触碰到叶轩的瞬间，陈雅婷感到强烈的性高潮。叶轩感到兴奋，主动与陈雅婷在课桌上发生关系。"
+    },
+    {
+      "id": "event020",
+      "name": "最终的觉醒",
+      "trigger_conditions": {
+        "location": "学校实验室",
+        "time": "深夜",
+        "characters": ["叶轩", "林小雨", "苏梦琪", "陈雅婷"],
+        "items": ["未知晶体"],
+        "stats": {
+          "林小雨": {
+            "affection": 95,
+            "arousal": 95,
+            "orgasm": 95,
+            "sex_experience": 80,
+            "sex_sensitivity": 95,
+            "sex_satisfaction": 95,
+            "sex_fantasy": 95
+          },
+          "苏梦琪": {
+            "affection": 95,
+            "arousal": 95,
+            "orgasm": 95,
+            "sex_experience": 80,
+            "sex_sensitivity": 95,
+            "sex_satisfaction": 95,
+            "sex_fantasy": 95
+          },
+          "陈雅婷": {
+            "affection": 95,
+            "arousal": 95,
+            "orgasm": 95,
+            "sex_experience": 90,
+            "sex_sensitivity": 95,
+            "sex_satisfaction": 95,
+            "sex_fantasy": 95
+          },
+          "叶轩": {
+            "arousal": 95,
+            "erection": 95,
+            "sex_experience": 90,
+            "sex_sensitivity": 95,
+            "sex_satisfaction": 95,
+            "sex_fantasy": 95
+          }
+        }
+      },
+      "description": "叶轩和三位女性角色在实验室研究晶体，晶体突然发出强烈的光芒。叶轩的能力得到增强，同时触碰到三位女性。三位女性同时感到强烈的性高潮，瘫软在叶轩怀里。叶轩意识到自己的能力已经完全觉醒，开始享受这种感觉。"
+    }
+  ],
+  "special_fetishes": {
+    "叶轩": [
+      "能力依赖：对自己的特殊能力产生依赖，享受通过接触控制他人的感觉",
+      "触摸癖：喜欢触摸女性的敏感部位，体验她们的反应",
+      "偷看：喜欢偷看女性的私密部位，尤其是在她们不知情的情况下"
+    ],
+    "林小雨": [
+      "暴露癖：喜欢在叶轩面前穿着性感的衣服，甚至裸露身体",
+      "震动玩具：喜欢使用震动玩具，尤其是在叶轩的触碰到",
+      "角色扮演：喜欢扮演不同的角色，如学生、护士、女仆等"
+    ],
+    "苏梦琪": [
+      "实验癖：喜欢通过实验的方式探索叶轩的能力",
+      "成熟女性：喜欢展现自己成熟女性的魅力，吸引叶轩",
+      "乳交：特别喜欢乳交，享受叶轩的触摸"
+    ],
+    "陈雅婷": [
+      "教师play：喜欢以教师的身份与叶轩互动",
+      "支配与被支配：有时喜欢支配叶轩，有时喜欢被叶轩支配",
+      "肛交：对肛交有特殊的兴趣，喜欢尝试不同的姿势"
+    ]
+  },
+  "stat_system": {
+    "female_stats": [
+      "生命值：角色的健康状态，影响角色的行动能力",
+      "情欲值：角色的性欲望程度，影响角色的行为和反应",
+      "高潮值：角色的高潮程度，影响角色的性体验和反应",
+      "好感度：角色对叶轩的好感程度，影响角色的互动方式",
+      "体力值：角色的体力状态，影响角色的持续行动能力",
+      "性经验值：角色的性经验丰富程度，影响性行为的表现",
+      "性敏感度：角色的性敏感程度，影响性刺激的反应",
+      "性满足度：角色的性满足程度，影响角色的情绪和行为",
+      "性幻想度：角色的性幻想强烈程度，影响角色的性需求"
+    ],
+    "male_stats": [
+      "生命值：角色的健康状态，影响角色的行动能力",
+      "情欲值：角色的性欲望程度，影响角色的行为和反应",
+      "好感度：角色对其他角色的好感程度，影响互动方式",
+      "体力值：角色的体力状态，影响角色的持续行动能力",
+      "勃起值：角色的勃起程度，影响性行为的表现",
+      "性经验值：角色的性经验丰富程度，影响性行为的表现",
+      "性敏感度：角色的性敏感程度，影响性刺激的反应",
+      "性满足度：角色的性满足程度，影响角色的情绪和行为",
+      "性幻想度：角色的性幻想强烈程度，影响角色的性需求"
+    ]
+  },
+  "game_mechanics": {
+    "interaction_system": [
+      "玩家可以通过选择不同的对话选项和行动来影响角色的数值",
+      "玩家可以通过身体接触来触发特殊事件和CG",
+      "玩家需要平衡各角色的数值，避免过度消耗体力"
+    ],
+    "ability_system": [
+      "叶轩的能力可以通过训练逐渐控制和增强",
+      "玩家可以选择使用能力或控制能力，影响游戏的发展方向"
+    ],
+    "ending_system": [
+      "根据玩家的选择和角色的数值，游戏会有不同的结局",
+      "结局包括：与某个角色的恋爱结局、能力控制结局、能力失控结局等"
+    ]
+  }
+}
